@@ -1,2 +1,0 @@
-class UnzipError < StandardError
-end

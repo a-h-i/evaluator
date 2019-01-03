@@ -1,2 +1,0 @@
-class ForbiddenError < StandardError
-end
