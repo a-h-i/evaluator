@@ -1,0 +1,23 @@
+.course {
+  text-transform: none;
+  .course-name {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    padding-bottom: 2em;
+  }
+
+  .course-description {
+    max-width: 60%;
+  }
+
+  .visibility-wrapper {
+    clear: both;
+    position: relative;
+    padding: 1em;
+  }
+
+}
+.course-ctrls {
+  margin-bottom: 2em;
+}

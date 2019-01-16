@@ -1,0 +1,69 @@
+<div class="spin-fullscreen-wrap" data-ng-if="loading">
+  <div class="spinner-wrap">
+  </div>
+  <i class="material-icons spinner">refresh</i>
+</div>
+
+<section id="submissionsWrapper" data-ng-if="!loading">
+  <header>
+    <h1 class="break-word flow-text">{{project.name}} Submissions</h1>
+    <a class="icon-link" data-ui-sref="private.project({id: project.id})"><i class="icon fi flaticon-square large-fi"></i> Test Suites</a>
+  </header>
+
+  <section class="team-grade-wrapper" data-ng-if="teamGradeApplicable">
+    <header>
+      <h3 class="break-word flow-text">Current Grade for team {{team}}</h3>
+    </header>
+    <ul class="submissions-list">
+      <li class="submission-item"
+      data-ng-class="teamGradeSubmission.status"
+      data-ng-repeat="teamGradeSubmission in teamGradeSubmissions track by $index"
+      >
+      <div data-submission data-data="teamGradeSubmission"
+      data-include-submitter="true"
+      data-no-download="true"
+      data-ng-class="submissionClasses[$index % submissionClasses.length]"
+      >
+      </div>
+    </li>
+    </ul>
+  </section>
+
+
+  <section class="submissions-wrapper">
+    <ul class="submissions-list">
+
+      <li class="submission-item btn-green"
+      analytics-on="click"
+      data-ng-if="canSubmit()"
+      analytics-event="submission-submit"
+      data-ng-click="showAddDialog($event)"
+      ><i class="material-icons">add</i></li>
+      <li class="submission-item"
+      data-ng-class="submission.status"
+      data-ng-repeat="submission in submissions track by $index"
+      >
+      <div
+      data-submission data-data="submission"
+      data-include-submitter="true"
+      data-ng-class="submissionClasses[$index %submissionClasses.length]"
+      ></div>
+      </li>
+      <li class="submission-item center-pseudo"
+      data-ng-show="loadingSubmissions"
+      >
+        <i class="material-icons spinner">refresh</i>
+      </li>
+    </ul>
+    <div class="pagination-controls" data-ng-hide="loadingSubmissions">
+      <button data-ng-disabled="backDisabled()"
+      data-ng-click="back()"
+      class="btn-amber"
+      ><i class="material-icons">navigate_before</i></button>
+      <button data-ng-disabled="nextDisabled()"
+      data-ng-click="next()"
+      class="btn-amber"
+      ><i class="material-icons">navigate_next</i></button>
+    </div>
+  </section>
+</section>

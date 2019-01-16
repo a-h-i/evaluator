@@ -1,0 +1,97 @@
+
+// families
+
+.proxima {
+  font-family: $proxima-nova-stack;
+}
+
+.thin-weight {
+  font-weight: $thin-weight;
+}
+
+.light-weight {
+  font-weight: $light-weight;
+}
+
+.normal-weight {
+  font-weight: $normal-weight;
+}
+
+.bold-weight {
+  font-weight: $bold-weight;
+}
+
+.ultra-bold-weight {
+  font-weight: $ultra-bold-weight;
+}
+
+.large-fi {
+  font-size: 2em;
+}
+
+
+.flow-text {
+  font-weight: $normal-weight;
+  $i: 0;
+  @while $i <= $intervals {
+    @media only screen and (min-width : 360 + ($i * $interval-size)) {
+      font-size: 1.2rem * (1 + (.02 * $i));
+    }
+    $i: $i + 1;
+  }
+
+  // Handle below 360px screen
+  @media only screen and (max-width: 360px) {
+    font-size: 1.2rem;
+  }
+}
+
+
+.icon {
+  display: inline-block;
+  margin-right: 25px;
+  position: relative;
+  color: $md-clr-pink-500;
+  @include media('<tablet') {
+    display: none;
+  }
+  &:after {
+    display: block;
+    position: absolute;
+    margin-top: -32px;
+    margin-left: -33px;
+    top: 50%;
+    left: 50%;
+    content: '';
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border: 2px solid $md-clr-pink-500;
+    transition: border-color .2s;
+    @include media('<tablet') {
+      display: none;
+    }
+  }
+}
+
+.icon-link {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: $md-clr-pink-500;
+  transition: color .2s;
+  background: transparent;
+
+  @include media('<tablet') {
+    letter-spacing: 1px;
+  }
+
+  &:hover {
+    color: $md-clr-pink-A100;
+    .icon:after {
+      border-color: $md-clr-pink-A100;
+    }
+  }
+}

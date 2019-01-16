@@ -1,0 +1,114 @@
+.top-nav {
+  position: relative;
+  background: transparent;
+  z-index: 100;
+  @include media('<tablet') {
+    font-size: .8rem;
+  }
+
+  .menu-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 30vw;
+    height: 15vh;
+    max-width: 100px;
+    max-height: 80px;
+    border-bottom-right-radius: 100%;
+    cursor: pointer;
+    background: $md-clr-blue-500;
+    box-shadow: 0 0 1em rgba(0, 0, 0, .5);
+  }
+
+  .menu-open,
+  .menu-close {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    transition: transform .7s $snap;
+  }
+
+  .menu-open {
+    transform-origin: -100px -100px;
+  }
+
+  .menu-close {
+    transform: rotate(20deg);
+    transform-origin: -100px -160px;
+  }
+
+
+  .nav-menu {
+    position: fixed;
+    z-index: 101;
+    transform: translateX(-500px);
+    bottom: 0;
+    left: 50px;
+    list-style-type: none;
+    @include media('<tablet') {
+      bottom: -5em;
+    }
+
+    li {
+      display: block;
+      height: 60px;
+      margin-bottom: 30px;
+      transform: translateX(-500px);
+      transition: transform .7s 0s $snap;
+
+      @for $i from 2 through 6 {
+        &:nth-child(#{$i}) {
+          margin-left: (40px * ($i - 1));
+          @include media('<tablet') {
+            margin-left: 20px * ($i - 1);
+          }
+        }
+      }
+    }
+  }
+}
+
+.content {
+  position: relative;
+  transform-origin: top left;
+  transition: transform .7s $snap, box-shadow .7s linear, left .7s $snap;
+}
+
+.content-inner {
+  transition: transform .7s $snap, box-shadow .7s linear;
+}
+
+
+#pageWrap.open {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .content {
+    transform: rotate(-35deg);
+    box-shadow: 0 0 1em rgba(0, 0, 0, .4);
+  }
+
+  .content-inner {
+    transform: scale(0.8);
+  }
+
+  .top-nav {
+    .menu-open {
+      transform: rotate(-25deg);
+    }
+
+    .menu-close {
+      transform: rotate(0);
+    }
+
+    .nav-menu {
+      transform: translateX(0);
+      li {
+        transform: translateX(0);
+        transition: transform .35s .45s $bounce;
+
+      }
+    }
+  }
+}

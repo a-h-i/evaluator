@@ -1,0 +1,32 @@
+.suites-list {
+  .suite-item {
+    display: block;
+    padding: .6em;
+    margin-bottom: 2em;
+    border-radius: .8em;
+    transition: all .3s ease;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:not(.pseudo-item) {
+      box-shadow: 0 0 .2em 0 rgba(0, 0, 0, .3);
+    }
+  }
+
+  .cases-list {
+    margin-left: .8em;
+    max-height: 10em;
+    overflow: auto;
+  }
+
+}
+
+#suitesWrapper {
+  margin-top: 1em;
+  header {
+    margin-bottom: 1.5em;
+    text-align: center;
+  }
+}

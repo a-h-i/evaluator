@@ -1,0 +1,47 @@
+<md-dialog aria-label="Add test suite" ng-cloak>
+<md-dialog-content>
+<form
+class="creation-dialog-form contract-form"
+data-ng-submit="submit()"
+id="suiteForm"
+name="suiteForm"
+novalidate
+>
+  <header>
+    <h3>Upload suite</h3>
+  </header>
+
+  <fieldset>
+    <div class="relative form-line">
+      <input class="material-text" ngf-select
+      ng-model="newSuiteData.file"
+      id="file" name="file"
+      required
+      >
+      <label for="file">File (zip only)</label>
+      <span class="form-field-error"
+      data-ng-class="{hidden: !suiteForm.file.$error.required}"
+      >This field is required</span>
+    </div>
+
+  </fieldset>
+
+  <fieldset>
+    <md-checkbox data-ng-model="newSuiteData.hidden" name="private" id="private" data-ng-init="newSuiteData.hidden=false">Private</md-checkbox>
+  </fieldset>
+
+    <p class="error">{{suiteCreateError}}</p>
+
+    <div class="flex-perfect-center-container">
+      <button type="submit" class="contract-overlay"
+      data-ng-disabled="suiteForm.$invalid"
+      data-ng-class="{loading: processingProject}"
+      >
+      <span class="label">Upload</span>
+      <i class="material-icons spinner">refresh</i>
+      </button>
+    </div>
+
+</form>
+</md-dialog-content>
+</md-dialog>

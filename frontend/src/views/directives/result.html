@@ -1,0 +1,37 @@
+<div class="result">
+<header>
+  <h3 class="name break-word">{{result.test_suite.name}}</h3>
+</header>
+  <div class="flex-perfect-center-container flex-column">
+    <p class="grade">{{result.grade}}/{{result.max_grade}}</p>
+  </div>
+
+  <div class="result-expand-wrapper"
+  data-ng-attr-id="{{'ResultExpandWrapperForResult' + result.id}}"
+  >
+    <div class="more-wrap" data-click-toggle="expand"
+    data-click-toggle-target="{{'#ResultExpandWrapperForResult' + result.id}}"
+    >
+      <md-button class="md-raised md-primary more">DETAILS</md-button>
+      <md-button class="md-raised md-primary less">LESS</md-button> 
+    </div>
+
+    <div data-ng-if="!result.compiled" class="message-container result-expandable"
+    >
+      <p data-ng-repeat="message in result.compiler_out_array track by $index"
+      class="result-compilation-error" data-highlight>{{message}}</p>
+    </div>
+
+    <div data-ng-if="result.compiled" class="result-cases-wrapper result-expandable">
+      <ul class="result-cases-list">
+        <li
+        data-result-case
+        data-data="case"
+        data-ng-repeat="case in result.cases"
+        class="result-case-item"
+        ></li>
+      </ul>
+    </div>
+
+  </div>
+</div>

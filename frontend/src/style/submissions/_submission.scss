@@ -1,0 +1,38 @@
+.submission {
+  text-transform: none;
+  @include media('<tablet') {
+    padding: .2rem;
+    font-size: .5rem;
+  }
+  .submission-status-icon {
+    font-size: 5em;
+  }
+
+  .float-wrapper {
+    clear: both;
+    position: relative;
+    padding: 1.5em;
+  }
+
+  .results-wrapper {
+    padding: .5em;
+  }
+  .created-at {
+    text-align: center;
+  }
+}
+
+.team-grade-wrapper {
+  margin-top: 1em;
+  margin-bottom: 1em;
+
+  header {
+    margin-bottom: .5em;
+    text-align: center;
+  }
+
+}
+
+#submissionsWrapper .icon-link {
+  margin: 3em 0;
+}

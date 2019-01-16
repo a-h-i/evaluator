@@ -1,0 +1,47 @@
+<div class="suite">
+  <p class="suite-name break-word">{{suite.name}}</p>
+
+  <div class="flex-perfect-center-container">
+    <div data-ng-if="!suite.ready">
+      <p>Processing ..</p>
+      <div class="flex-perfect-center-container"><i class="material-icons spinner">refresh</i></div>
+    </div>
+    <div data-ng-if="suite.ready">
+      <p>Ready</p>
+      <div class="flex-perfect-center-container flex-column">
+        <i class="material-icons check">check</i>
+        <md-button class="md-fab md-mini" data-ng-if="canDelete"
+        analytics-on="click"
+        analytics-event="suite-delete"
+        data-ng-click="showDeleteDialog($event)" aria-label="delete">
+          <md-icon md-font-set="material-icons">delete_forever</md-icon>
+        </md-button>
+      </div>
+    </div>
+  </div>
+  <div class="suite-detail" data-ng-if="suite.ready">
+    <p>Max Grade: {{suite.max_grade}}</p>
+    <p>Test Timeout: {{suite.timeout}} seconds</p>
+    <p>Number of cases: {{suite.suite_cases.length}}</p>
+
+    <header>
+      <h4>Test Cases</h4>
+    </header>
+
+    <ul class="cases-list">
+      <li class="case-item" data-ng-repeat="case in suite.suite_cases">
+        <p class="case-name">Name: {{case.name}}</p>
+        <p class="case-grade">Grade: {{case.grade}}</p>
+      </li>
+    </ul>
+  </div>
+
+  <div class="float-wrapper">
+    <i class="material-icons right" data-ng-if="suite.hidden">visibility_off</i>
+    <i class="material-icons right" data-ng-if="!suite.hidden">visibility_on</i>
+    <i data-ng-click="download()" data-ng-if="canDownload"
+    analytics-on="click"
+    analytics-event="suite-download"
+    class="material-icons left clickable-icon">file_download</i>
+  </div>
+</div>

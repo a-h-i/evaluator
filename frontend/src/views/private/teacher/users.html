@@ -1,0 +1,82 @@
+<section id="usersWrapper">
+  <!-- Spinner used when loading for the first time -->
+  <div class="spin-fullscreen-wrap" data-ng-if="loading">
+    <div class="spinner-wrap">
+    </div>
+    <i class="material-icons spinner">refresh</i>
+  </div>
+
+  <header>
+    <h1>Users</h1>
+  </header>
+
+<section class="search-controls">
+  <div class="flex-row-between checkboxes">
+    <md-checkbox data-ng-disabled="loadingUsers" ng-model="studentsOnly">Students Only</md-checkbox>
+    <md-checkbox data-ng-disabled="loadingUsers" ng-model="teachersOnly">Teachers Only</md-checkbox>
+    <md-checkbox ng-model="superUser">Admins Only</md-checkbox>
+  </div>
+
+  <form novalidate>
+
+    <fieldset>
+      <div class="relative form-line">
+        <input class="material-text" type="text" data-ng-model="searchData.name" id="name" name="name" required>
+        <label for="name">Name</label>
+      </div>
+
+      <div class="relative form-line">
+        <input class="material-text" type="text" data-ng-model="searchData.email" id="email" name="email" required>
+        <label for="email">Email</label>
+      </div>
+    </fieldset>
+
+    <fieldset data-ng-hide="teachersOnly || superUser">
+      <div class="relative form-line">
+        <input class="material-text" type="text" data-ng-model="searchData.team" id="team" name="team" required>
+        <label for="team">Team</label>
+      </div>
+      <div class="relative form-line">
+        <input class="material-text" type="text"
+        data-ng-model="searchData.guc_prefix"
+        id="guc_prefix" name="guc_prefix" required
+        >
+        <label for="guc_prefix">GUC ID Prefix (before dash)</label>
+      </div>
+      <div class="relative form-line">
+        <input class="material-text" type="text" data-ng-model="searchData.guc_suffix" id="guc_suffix" name="guc_suffix" required>
+        <label for="guc_suffix">GUC ID Suffix (after dash)</label>
+      </div>
+    </fieldset>
+  </form>
+
+</section>
+
+<ul class="users-list">
+  <li class="user-item"
+  data-ng-repeat="user in users track by $index"
+  data-ng-class="userClasses[$index % userClasses.length]"
+  >
+  <x-user data-data="user"></x-user>
+  </li>
+  <li class="user-item center-pseudo"
+  data-ng-show="loadingUsers"
+  >
+    <i class="material-icons spinner">refresh</i>
+  </li>
+</ul>
+
+<div class="pagination-controls"
+data-ng-hide="loadingUsers"
+>
+  <button data-ng-disabled="backDisabled()"
+  data-ng-click="back()"
+  class="btn-amber"
+  ><i class="material-icons">navigate_before</i></button>
+  <button data-ng-disabled="nextDisabled()"
+  data-ng-click="next()" class="btn-amber">
+  <i class="material-icons">navigate_next</i></button>
+</div>
+
+
+</section>

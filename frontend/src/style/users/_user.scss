@@ -1,0 +1,14 @@
+.user {
+  text-transform: none;
+  p {
+    margin-bottom: 0.4em;
+  }
+
+  .user-controls-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 70%;
+    margin: 3em auto 0px;
+  }
+}

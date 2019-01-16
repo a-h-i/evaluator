@@ -1,0 +1,83 @@
+[class*='btn-'] {
+  padding: 0.5em;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0.8em;
+  border-style: solid;
+  border-width: 2px;
+  background-color: transparent;
+  transition: all .3s ease;
+  user-select: none;
+  text-transform: capitalize;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+
+  &.active {
+    cursor: default;
+
+    a {
+      cursor: default;
+    }
+
+    background-color: $yellow;
+    border-color: $yellow;
+
+    &:hover {
+      background-color: $yellow;
+      transform: none;
+    }
+  }
+
+  &[disabled] {
+    background-color: $md-clr-grey-400;
+    border-color: transparent;
+
+    &:hover {
+      background-color: $md-clr-grey-400;
+      transform: none;
+    }
+  }
+}
+
+.btn-red {
+  border-color: $red;
+
+  &:hover {
+    background-color: $red;
+  }
+}
+
+.btn-green {
+  border-color: $green;
+
+  &:hover {
+    background-color: $green;
+  }
+}
+
+.btn-blue {
+  border-color: $blue;
+
+  &:hover {
+    background-color: $blue;
+  }
+}
+
+.btn-amber {
+  border-color: $amber;
+
+  &:hover {
+    background-color: $amber;
+  }
+}
+
+.btn-pink {
+  border-color: $md-clr-pink-500;
+
+  &:hover {
+    background-color: $md-clr-pink-500;
+  }
+}

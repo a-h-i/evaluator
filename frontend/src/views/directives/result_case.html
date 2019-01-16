@@ -1,0 +1,8 @@
+<div class="result-case">
+  <div class="flex-row-between">
+    <p class="result-case-name break-word">{{case.java_klass_name}}.{{case.name}}</p>
+    <p class="result-case-grade">{{case.grade}}/{{case.max_grade}}</p>
+  </div>
+  <div data-ng-show="case.detail.trim().length > 0" class="result-head-detail-seperator"></div>
+  <p class="result-case-detail break-word">{{case.detail}}</p>
+</div>

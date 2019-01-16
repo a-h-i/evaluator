@@ -1,0 +1,120 @@
+form {
+  button[type="submit"] {
+    padding: 0.5em;
+    width: 10em;
+    height: 2em;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 1em;
+    border: 2px solid $green;
+    background-color: $green;
+    position: relative;
+
+    &.loading {
+      width: 2em;
+      height: 2em;
+      border-radius: 50%;
+
+      &, &:hover {
+        background-color: $blue;
+        border: none;
+      }
+    }
+
+    &:hover {
+      background-color: transparent;
+    }
+
+    &[disabled] {
+      cursor: not-allowed;
+      background: $md-clr-grey-300;
+      border: 1px solid $md-clr-grey-300;
+    }
+  }
+
+  .error {
+    padding-bottom: 1em;
+  }
+
+  .form-line {
+    margin-bottom: 4em;
+  }
+
+  fieldset:last-of-type {
+    .form-line:last-child {
+      margin-bottom: 1em;
+    }
+  }
+
+}
+
+
+
+.contract-form {
+  header {
+    margin-bottom: 2em;
+    text-align: center;
+  }
+
+
+  .form-field-error {
+    position: absolute;
+  }
+
+  .links .link {
+    display: block;
+    padding-top: 0.5em;
+
+    &:first-child {
+      padding-top: 0px;
+    }
+
+    &:last-child {
+      padding-bottom: 0.5em;
+    }
+  }
+}
+
+.creation-dialog-form {
+  box-sizing: content-box;
+  padding: 2em;
+
+  .date-input {
+    background: transparent;
+    border: 1px solid black;
+    padding: 0.3em;
+  }
+}
+
+#profileForm {
+  input.material-text[type="password"] {
+    &.ng-dirty ~ label {
+      top: -1em;
+      font-size: 1.4em;
+      transition: none;
+
+      @include media("height<=730px") {
+        font-size: 1.1em;
+      }
+    }
+  }
+}
+
+#teamsForm {
+  .messages {
+    padding: 1em;
+    max-height: 10em;
+    overflow: auto;
+  }
+}
+
+
+#submissionsSearchForm {
+  margin: 0 auto;
+  max-width: 60vw;
+}
+
+md-autocomplete {
+  margin-bottom: .5em;
+}
