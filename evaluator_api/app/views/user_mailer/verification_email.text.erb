@@ -1,0 +1,13 @@
+Welcome to Evaluator!
+======================
+
+Hello, <%=@user.full_name %>.
+You have used the email <%= @user.email %> to signup for an evaluator account.
+
+Please verify your account by following this link  http://evaluator.in/#/verify/<%= @user.id %>?token=<%= @token %>
+
+<% if @user.teacher? %>
+Remember, it's the children that are wrong!
+<% else %>
+Good luck in your courses! Don't be afraid to ask for help
+<% end %>

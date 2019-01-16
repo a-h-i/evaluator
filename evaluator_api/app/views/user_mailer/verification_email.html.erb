@@ -1,0 +1,16 @@
+<h1>Welcome to Evaluator!</h1>
+<p>Hello, <%= @user.full_name %>.</p>
+<p>
+You have used the email <%= @user.email %> to signup for an evaluator account.
+</p>
+
+
+
+<p>Please verify your account by clicking <a href="http://evaluator.in/#/verify/<%= @user.id %>?token=<%= @token %>">here</a></p>
+<p>Or if you are having trouble following that link just copy paste this URL http://evaluator.in/#/verify/<%= @user.id %>?token=<%= @token %> </p>
+
+<% if @user.teacher? %>
+  <p>Remember, it's the children that are wrong!</p>
+<% else %>
+  <p>Good luck in your courses! Don't be afraid to ask for help</p>
+<% end %>

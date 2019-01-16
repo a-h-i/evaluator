@@ -1,13 +1,13 @@
 inherit_from:
   - .disabled.yml
 AllCops:
-  TargetRubyVersion: 2.2
+  TargetRubyVersion: 2.6
   Exclude:
-    - 'bin/**/*'
-    - 'tmp/**/*'
+    - 'evaluator_api/bin/**/*'
+    - 'evaluator_api/tmp/**/*'
     - 'client/**/*'
-    - 'db/**/*'
-    - 'spec/**/*'
+    - 'evaluator_api/db/**/*'
+    - 'evaluator_api/spec/**/*'
 
 Metrics/AbcSize:
   Max: 30

@@ -1,0 +1,10 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  pool: 30
+
+test:
+  adapter: postgresql
+  database: travis_ci_test
+  username: postgres
