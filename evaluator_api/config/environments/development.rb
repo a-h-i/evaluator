@@ -14,13 +14,18 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  config.action_controller.perform_caching = false
-  config.cache_store = :redis_cache_store, { host: 'localhost',
-                                       port: 6379,
-                                       driver: 'hiredis',
-                                       db: 2,
-                                       namespace: 'evaluator_development_cache',
-                                       expires_in: 90.minutes }
+  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+    config.action_controller.perform_caching = true
+
+    config.cache_store = :memory_store
+    config.public_file_server.headers = {
+      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+    }
+  else
+    config.action_controller.perform_caching = false
+
+    config.cache_store = :null_store
+  end
 
   # Store uploaded files on the local file system (see config/storage.yml for options)
   config.active_storage.service = :local
@@ -38,18 +43,12 @@ Rails.application.configure do
 
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
-  # config.assets.digest = true
+
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  # config.assets.raise_runtime_errors = true
-  # config.assets.cache_store = :null_store
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-  config.debug_exception_response_format = :api
 end

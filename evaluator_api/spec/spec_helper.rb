@@ -13,37 +13,10 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-require "email_spec"
-module Request
-  module JsonHelpers
-    def json_response
-      JSON.parse(response.body, symbolize_names: true)
-    end
-  end
-end
-module Request
-  module HeaderHelpers
-    def set_token(token)
-      request.headers['Authorization'] = "Bearer #{token}"
-    end
-  end
-end
-module RequestSpec
-  module HeaderHelpers
-    def get_token(token)
-      {'AUTHORIZATION': "Bearer #{token}"}
-    end
-  end
-end
-
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
-  unless ENV['TRAVIS']
-    config.filter_run focus: true
-    config.run_all_when_everything_filtered = true
-  end
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
@@ -54,9 +27,7 @@ RSpec.configure do |config|
     #     # => "be bigger than 2"
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
-  config.include Request::JsonHelpers
-  config.include Request::HeaderHelpers, type: :controller
-  config.include RequestSpec::HeaderHelpers, type: :request
+
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.
   config.mock_with :rspec do |mocks|
@@ -72,16 +43,8 @@ RSpec.configure do |config|
   # inherited by the metadata hash of host groups and examples, rather than
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
-  config.formatter = :documentation
-  config.after(:each) do
-    $redis.redis.flushdb
-  end
-  config.profile_examples = 10
-  config.order = :random
-  config.include(EmailSpec::Helpers)
-  config.include(EmailSpec::Matchers)
-  config.include(ActiveJob::TestHelper)
-  # The settings below are suggested to provide a good initial experience
+
+# The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin
   # This allows you to limit a spec run to individual examples or groups

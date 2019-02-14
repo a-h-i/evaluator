@@ -1,15 +1,19 @@
-# Concern for User class JWT authentication.
+
 module JwtAuthenticatable
   extend ActiveSupport::Concern
+  include PasswordHashable
 
   module ClassMethods
+    def jwt_hash_key
+      [Rails.application.credentials.jwt_hash_key].pack("h*")
+    end
+
     def decode_token(token)
-      decoded = JWT.decode token, hmac_key, true, algorithm: 'HS512'
-      data = decoded.first['data']
-      user = find data['id']
-      raise AuthenticationError unless Rack::Utils.secure_compare(
-        user.password_digest, data['discriminator'])
-      [user, data['exp']]
+      decoded = JWT.decode token, jwt_hash_key, true, algorithm: "HS512"
+      data = decoded.first["data"]
+      resource = cache_fetch(data["id"]) { find(data["id"]) }
+      raise AuthenticationError unless Rack::Utils.secure_compare(resource.password_hash, data["discriminator"])
+      [resource, data["exp"]]
     end
 
     # Retrieve user based on token
@@ -20,48 +24,34 @@ module JwtAuthenticatable
     # Raises AuthenticationError if incorrect authentication data supplied
     # returns User instance
     def find_by_token(token)
-      cached = $redis.get token
-      if cached.nil?
-        record, exp = decode_token(token)
-        return record if exp.nil?
-        exp -= Time.now.to_i
+      resource = cache_read token
+      if resource.nil?
+        resource, exp = decode_token token
+        return resource if exp.nil?
         unless exp < 0
           $redis.set token, Marshal.dump(self)
           $redis.expire token, exp
+          cache_write token, expires_in: exp - Time.now.to_i
         end
-        record
-      else
-        Marshal.load(cached)
       end
+      resource
     end
-
-    def hmac_key
-      Rails.application.config.jwt_key
-    end
-  end
-
-  included do
-    has_many :verification_tokens, dependent: :delete_all
   end
 
   # Generates a timed JWT
   # expiration unit is hours
   # default is 1 hour
-  def token(expiration = nil)
-    expiration ||= 1
+  def token(expiration = 1)
     payload = {
       data: {
         id: id,
-        discriminator: password_digest
-        # discriminator used to detect password changes after token generation
+        discriminator: password_hash,
       },
-      exp: Time.now.to_i + expiration.hours
+      exp: Time.now.to_i + expiration.hours,
+      iat: Time.now.to_i,
     }
-    # HMAC using SHA-512 algorithm
-    token = JWT.encode payload, User.hmac_key, 'HS512'
-    $redis.set token, Marshal.dump(self)
-    $redis.expire token, expiration.hours
-    self.class.add_related_cache(id, token)
+    token = JWT.encode payload, self.class.jwt_hash_key, "HS512"
+    self.class.cache_write token, self, expires_in: expiration.hours
     token
   end
 end

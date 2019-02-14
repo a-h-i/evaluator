@@ -1,2 +1,0 @@
-class TarError < StandardError
-end

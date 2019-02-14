@@ -1,3 +1,0 @@
-ant -buildfile <%= @buildfile_name %> delete_test_source
-ant -buildfile <%= @buildfile_name %> clear_test_results
-timeout -s 9 <%= @test_timeout %> ant -buildfile <%= @buildfile_name %> test

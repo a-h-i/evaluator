@@ -1,27 +1,39 @@
-
+# PostgreSQL. Versions 9.1 and up are supported.
+#
+# Install the pg driver:
+#   gem install pg
+# On OS X with Homebrew:
+#   gem install pg -- --with-pg-config=/usr/local/bin/pg_config
+# On OS X with MacPorts:
+#   gem install pg -- --with-pg-config=/opt/local/lib/postgresql84/bin/pg_config
+# On Windows:
+#   gem install pg
+#       Choose the win32 build.
+#       Install PostgreSQL and put its /bin directory on your path.
+#
+# Configure Using Gemfile
+# gem 'pg'
+#
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: localhost
-  pool: 120
+  # For details on connection pooling, see Rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 1
+  password: password
+  min_messages: log
 
 development:
   <<: *default
-  database: evaluator_development
-  username: evaluator
-  password: evaluator
-  min_messages: warning
-
+  database: evaluator_api_development
 test:
   <<: *default
-  database: evaluator_testing
-  username: evaluator
-  password: evaluator
-  min_messages: warning
-
+  database: evaluator_api_test
 production:
   <<: *default
-  database: <%= ENV['DB_NAME'] %>
-  username: <%= ENV['DB_USER'] %>
-  password: <%= ENV['DB_PASSWORD'] %>
-  pool: <%= ENV.fetch('RAILS_DB_POOL', 1) %>
+  database: evaluator_api_production
+  username: evaluator_api
+  password: <%= ENV['EVALUATOR_API_DATABASE_PASSWORD'] %>
+  host: <%= ENV['EVALUATOR_API_DATABASE_HOST'] %>
+  port: <%= ENV['EVALUATOR_API_DATABASE_PORT'] %>
+  min_messages: warning
