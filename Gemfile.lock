@@ -50,7 +50,7 @@ GEM
       rake (~> 10.4)
     arel (6.0.3)
     ast (2.2.0)
-    bcrypt (3.1.11)
+    bcrypt (3.1.12)
     builder (3.2.2)
     byebug (8.2.4)
     choice (0.2.0)
@@ -274,7 +274,7 @@ DEPENDENCIES
   activemodel (~> 4.2, >= 4.2.5.2)
   activerecord (~> 4.2, >= 4.2.5.1)
   annotate
-  bcrypt (~> 3.1.7)
+  bcrypt (~> 3.1.12)
   byebug
   codeclimate-test-reporter
   email_spec
@@ -305,7 +305,7 @@ DEPENDENCIES
   thin
 
 RUBY VERSION
-   ruby 2.2.4p230
+   ruby 2.3.0p0
 
 BUNDLED WITH
-   1.13.5
+   1.17.3
