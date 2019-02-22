@@ -13,10 +13,29 @@
 # it.
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+require 'factory_bot'
+module Request
+  module HeaderHelpers
+    def set_token(token)
+      request.headers['Authorization'] = "Bearer #{token}"
+    end
+  end
+  module JsonHelpers
+    def json_response
+      JSON.parse(response.body, symbolize_names: true)
+    end
+  end
+end
+
 RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
+  unless ENV['TRAVIS']
+    config.filter_run focus: true
+    config.run_all_when_everything_filtered = true
+  end
   config.expect_with :rspec do |expectations|
     # This option will default to `true` in RSpec 4. It makes the `description`
     # and `failure_message` of custom matchers include text for helper methods
@@ -43,7 +62,14 @@ RSpec.configure do |config|
   # inherited by the metadata hash of host groups and examples, rather than
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
-
+  config.default_formatter = "doc"
+  config.example_status_persistence_file_path = "spec/state"
+  config.order = :random
+  config.include Request::JsonHelpers
+  config.include Request::HeaderHelpers, type: :controller
+  config.after(:each) do
+    Rails.application.config.redis.flushall
+  end
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin

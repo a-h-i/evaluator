@@ -1,0 +1,2 @@
+class TarError < StandardError
+end

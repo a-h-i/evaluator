@@ -20,8 +20,10 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: 1
+  username: evaluator_api
   password: password
   min_messages: log
+  host: 'localhost'
 
 development:
   <<: *default
@@ -32,7 +34,6 @@ test:
 production:
   <<: *default
   database: evaluator_api_production
-  username: evaluator_api
   password: <%= ENV['EVALUATOR_API_DATABASE_PASSWORD'] %>
   host: <%= ENV['EVALUATOR_API_DATABASE_HOST'] %>
   port: <%= ENV['EVALUATOR_API_DATABASE_PORT'] %>

@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   include JwtAuthenticatable
   GUC_EMAIL_REGEX = /\A[a-zA-Z\.\-]+@(student.)?guc.edu.eg\z/
+  STUDENT_EMAIL_REGEX = /\A[a-zA-Z\.\-]+@student.guc.edu.eg\z/
   before_validation :downcase_email
   before_validation :set_subtype
   validates :name, presence: true
@@ -10,7 +11,12 @@ class User < ApplicationRecord
   validate :student_fields
   validate :super_user_teacher
   scope :students, -> { where student: true }
-  scope :teachers, -> { where student: false }
+  scope :teachers, -> { where student: false } 
+  has_many :submissions, inverse_of: :submitter, foreign_key: :submitter_id,
+                         dependent: :destroy
+  # dependent deletion for registration done at db level                         
+  has_many :student_course_registrations, inverse_of: :student, foreign_key: :student_id
+  has_many :courses, through: :student_course_registrations
 
   def guc_id
     "#{guc_prefix}-#{guc_suffix}"
@@ -32,6 +38,10 @@ class User < ApplicationRecord
 
   private
 
+  def super_user_teacher
+    errors.add(:super_user, 'Must be a teacher') if student? && super_user?
+  end
+
   def email_not_changed
     errors.add(:email, "can not be changed") if email_changed? && persisted?
   end
@@ -46,9 +56,9 @@ class User < ApplicationRecord
 
   def student_fields
     if student?
-      errors.add(:major, "is required") unless major.is_a? String
-      errors.add(:study_group, "is required") unless study_group.is_a? String
-      unless guc_prefix.is_a?(Integer) && guc_suffix.is_a?(Integer)
+      errors.add(:major, "is required") if major.nil?
+      errors.add(:study_group, "is required") if study_group.nil?
+      if guc_prefix.nil? || guc_suffix.nil?
         errors.add("guc_id", "is required")
       end
     end

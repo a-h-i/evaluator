@@ -2,9 +2,9 @@ class CreateUsers < ActiveRecord::Migration[5.2]
   def up
     execute <<-SQL
     CREATE TABLE users (
-      id BIGSERIAL PRIMARY KEY
-      created_at timestamp without timezone not null default localtimestamp,
-      updated_at timestamp without timezone not null,
+      id BIGSERIAL PRIMARY KEY,
+      created_at timestamp without time zone not null default localtimestamp,
+      updated_at timestamp without time zone not null,
       guc_prefix integer,
       guc_suffix integer, 
       password_digest text not null,

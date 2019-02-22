@@ -5,6 +5,8 @@ This file documents the API server.
 ## Ruby Version
 `2.2.1`
 
+## Postgresql
+Postgresql version must be >= 10
 
 
 ## Installing dependencies

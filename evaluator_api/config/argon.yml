@@ -1,0 +1,3 @@
+argon: 
+  t_cost: <%= ENV.fetch('EVALUATOR_ARGON_T_COST', 3) %>
+  m_cost: <%= ENV.fetch('EVALUATOR_ARGON_M_COST', 12) %>

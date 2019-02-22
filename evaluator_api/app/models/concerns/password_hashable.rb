@@ -1,18 +1,21 @@
 require 'digest'
 module PasswordHashable
   extend ActiveSupport::Concern
+  include ActiveModel::Validations
   include Cachable
 
-  attr_reader :password
+  attr_accessor :password
 
-  def password=(unencrypted_password)
-    if unencrypted_password.nil?
+  def hash_password
+    if password.nil?
       self.password_digest = nil
-    elsif !unencrypted_password.empty?
-      argon = Argon2::Password.new(t_cost: config.argon_t_cost, m_cost: config.argon_m_cost, secret: self.class.pass_hash_key)
-      self.password_digest = argon.create(unencrypted_password)
+    elsif !password.empty?
+      config = Rails.application.config.argon
+      argon = Argon2::Password.new(t_cost: config[:t_cost], m_cost: config[:m_cost], secret: self.class.pass_hash_key)
+      self.password_digest = argon.create(password)
     end
   end
+
 
   def authenticate?(unencrypted_password)
     Argon2::Password.verify_password(unencrypted_password, self.password_digest, self.class.pass_hash_key)
@@ -24,10 +27,11 @@ module PasswordHashable
 
   module ClassMethods
     def login(email, password)
-      login_key = get_cache_key(email: email)
-      resource = cache_fetch(login_key) do
-        self.class.find_by email: email, verified: true
+      resource = cache_fetch({email: email}) do
+        resource = find_by(email: email)
+        resource.add_related_cache_key({email: email})
       end
+      resource = resource
       raise AuthenticationError unless resource.authenticate?(password)
       raise ForbiddenError unless resource.allowed_login?
       resource
@@ -40,8 +44,10 @@ module PasswordHashable
   end
 
   included do
+    validates :password, length: { minimum: 2 }, allow_nil: true
     validate do |record|
-      record.errors.add(:password, :blank) unless record.password_digest.present?
+      record.errors.add(:password, :blank) if record.password_digest.nil? && password.nil?
     end
+    before_save :hash_password
   end
 end

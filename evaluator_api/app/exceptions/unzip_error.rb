@@ -1,0 +1,2 @@
+class UnzipError < StandardError
+end
