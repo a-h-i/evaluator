@@ -44,7 +44,7 @@ class SubmissionEvaluationJob < ActiveJob::Base
       @selinux_directory = `mktemp -d`.chomp
       begin
         @command = "sandbox -M -H #{@working_directory} -T #{@selinux_directory} bash"
-        @command = 'bash'  if Rails.env.test?
+        @command = 'bash'  if Rails.env.test? or Rails.env.development?
         @compile_command = @command + " -c \" echo && ./#{config[:ant_compile_file_name]} \" 2>&1"
         @compile_test_command = @command + " -c \" echo && ./#{config[:ant_compile_tests_file_name]} \" 2>&1"
         @test_command = @command + " -c \" echo && ./#{config[:ant_test_file_name]} \" 2>&1"
