@@ -27,6 +27,7 @@ angular.module 'evaluator'
   .constant 'baseHost', '/'
   .constant 'defaultPageSize', 15
   .constant 'GUC_ID_REGEX', /^([0-9]+)-([0-9]+)$/
+  .constant 'RECAPTCHA_KEY', '6LetW5MUAAAAAHYqwbTCL2RkMLOLfqPr901s90z1'
 
 # Infinite scroll throttling
 angular.module 'infinite-scroll'

@@ -75,7 +75,7 @@ var options = minimist(process.argv.slice(2), {
 
 gulp.task('production-helper', gulp.series('bower', function() {
   var cssStream = css.minifyCss(css.processSass());
-  var scriptStream = scripts.processScripts().pipe(ngAnnotate()).pipe(uglify());
+  var scriptStream = scripts.processScripts().pipe(ngAnnotate());
   var dependenciesStream = scripts.processDeps().pipe(uglify());
   var routesStream = scripts.processRoutes().pipe(uglify({mangle: false}));
   var templatesStream = templates.minifyTemplates();
