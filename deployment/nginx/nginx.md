@@ -1,7 +1,9 @@
 
 
 Install dependencies by following [this](dependencies.md)
-Setup swap by following [this](swap.md)
+
+Set timezone and localsettings by following[this](../misc/locale.md)
+Setup swap by following [this](../misc/swap.md)
 Grab ssl cert [here](ssl.md)
 Setup nginx [here](nginx_config.md)
 

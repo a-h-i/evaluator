@@ -14,7 +14,7 @@ systemctl start firewalld
 This example we will use public as our default zone
 
 To list the services of public zone
-`firewall-cmd --zone=public --list-service`
+`firewall-cmd --zone=public --list-services`
 
 `firewall-cmd --list-all-zones` lists all zones
 

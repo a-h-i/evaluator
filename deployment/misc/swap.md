@@ -3,7 +3,7 @@
 # Recommended Swap
 
 ```
-fallocate -l 1G /swapfile
+fallocate -l 10G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile

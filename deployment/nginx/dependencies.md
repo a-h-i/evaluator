@@ -1,7 +1,8 @@
 
-
-`dnf install nginx make git autoconf gcc gcc-c++ openssl curl firewalld vim node-gyp readline-devel cmake policycoreutils-python-utils`
-
+```bash
+dnf update
+dnf install nginx make git autoconf gcc gcc-c++ openssl curl firewalld vim node-gyp readline-devel cmake policycoreutils-python-utils
+```
 For frontend development make sure to install nvm as well to manage node versions
 
 ```bash
