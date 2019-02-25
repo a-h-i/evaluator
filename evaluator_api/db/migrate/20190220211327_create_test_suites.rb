@@ -10,6 +10,7 @@ class CreateTestSuites < ActiveRecord::Migration[5.2]
       max_grade integer NOT NULL DEFAULT 0,
       name text NOT NULL,
       test_cases jsonb,
+      detail jsonb NOT NULL,
       hidden boolean NOT NULL DEFAULT true,
       ready boolean NOT NULL DEFAULT false,
       UNIQUE(project_id, name)

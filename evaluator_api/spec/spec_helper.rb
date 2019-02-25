@@ -14,21 +14,13 @@
 #
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'factory_bot'
-module Request
-  module HeaderHelpers
-    def set_token(token)
-      request.headers['Authorization'] = "Bearer #{token}"
-    end
-  end
-  module JsonHelpers
-    def json_response
-      JSON.parse(response.body, symbolize_names: true)
-    end
-  end
-end
+
+Dir[File.join(__dir__, 'support', '*.rb')].each { |file| require file }
+
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.full_backtrace = false
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

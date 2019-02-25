@@ -45,7 +45,8 @@ module JwtAuthenticatable
   # Generates a timed JWT
   # expiration unit is hours
   # default is 1 hour
-  def token(expiration = 1)
+  def token(expiration = nil)
+    expiration ||= 1
     payload = {
       data: {
         id: id,

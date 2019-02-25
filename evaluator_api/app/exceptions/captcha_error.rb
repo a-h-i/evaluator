@@ -1,0 +1,2 @@
+class CaptchaError < StandardError
+end

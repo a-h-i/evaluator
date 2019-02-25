@@ -1,5 +1,27 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id               :bigint(8)        not null, primary key
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  guc_prefix       :integer
+#  guc_suffix       :integer
+#  password_digest  :text             not null
+#  name             :text             not null
+#  email            :text             not null
+#  major            :text
+#  study_group      :text
+#  verified         :boolean          default(FALSE), not null
+#  verified_teacher :boolean          default(FALSE), not null
+#  super_user       :boolean          default(FALSE), not null
+#  student          :boolean          default(TRUE), not null
+#
+
 class User < ApplicationRecord
   include JwtAuthenticatable
+  include EmailVerifiable
+  include PasswordResetable
   GUC_EMAIL_REGEX = /\A[a-zA-Z\.\-]+@(student.)?guc.edu.eg\z/
   STUDENT_EMAIL_REGEX = /\A[a-zA-Z\.\-]+@student.guc.edu.eg\z/
   before_validation :downcase_email
@@ -17,6 +39,11 @@ class User < ApplicationRecord
   # dependent deletion for registration done at db level                         
   has_many :student_course_registrations, inverse_of: :student, foreign_key: :student_id
   has_many :courses, through: :student_course_registrations
+
+
+  def as_json(_options = {})
+    super(except: [:password_digest])
+  end
 
   def guc_id
     "#{guc_prefix}-#{guc_suffix}"

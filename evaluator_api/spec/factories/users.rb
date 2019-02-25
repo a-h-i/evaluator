@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id               :bigint(8)        not null, primary key
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  guc_prefix       :integer
+#  guc_suffix       :integer
+#  password_digest  :text             not null
+#  name             :text             not null
+#  email            :text             not null
+#  major            :text
+#  study_group      :text
+#  verified         :boolean          default(FALSE), not null
+#  verified_teacher :boolean          default(FALSE), not null
+#  super_user       :boolean          default(FALSE), not null
+#  student          :boolean          default(TRUE), not null
+#
+
 FactoryBot.define do
   factory :user do
     name { Faker::Name.name }

@@ -1,4 +1,5 @@
 # Application wide configurations shared with client
+require 'digest'
 Rails.application.config.configurations = {
   error_messages: {
     expired_token: 'Token has expired',
@@ -14,7 +15,8 @@ Rails.application.config.configurations = {
     too_soon: 'Please calm down',
     bad_request: 'Bad Request',
     internal_server_error: 'Internal Server error',
-    forbidden_super_user_only: 'Must be a super user to perform this action'
+    forbidden_super_user_only: 'Must be a super user to perform this action',
+    too_many_requests: 'too many requests'
   },
   default_token_exp: 24.hours,
   messages: {
@@ -45,3 +47,5 @@ Rails.application.config.configurations = {
   },
   project_bundle_life_hours: 24
 }
+Rails.application.config.configuration_last_modified_at = Time.new(2019, 1, 1).utc
+Rails.application.config.configurations_digest = Digest::MD5.hexdigest(Rails.application.config.configurations.to_s)

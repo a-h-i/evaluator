@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: courses
+#
+#  id          :bigint(8)        not null, primary key
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  name        :text             not null
+#  description :text             not null
+#  published   :boolean          default(FALSE), not null
+#
+
 require "rails_helper"
 
 RSpec.describe Course, type: :model do
@@ -8,5 +20,24 @@ RSpec.describe Course, type: :model do
   it { should have_many :projects }
   it { should have_many :students }
   it { should have_many :student_course_registrations }
-  it { should have_many :test_suites }
+
+  describe 'factory' do
+    let(:course) { FactoryBot.build(:course) }
+    it 'has a valid factory' do
+      expect(course).to be_valid
+    end
+  end
+
+  describe 'default values' do
+    context 'published' do
+      let(:course) { FactoryBot.build(:course) }
+      it 'should be false by default' do
+        expect(course).to be_valid
+        course.save!
+        expect(course.published).to be false
+      end
+    end
+  end
+
+  
 end

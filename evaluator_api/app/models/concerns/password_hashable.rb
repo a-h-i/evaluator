@@ -7,9 +7,7 @@ module PasswordHashable
   attr_accessor :password
 
   def hash_password
-    if password.nil?
-      self.password_digest = nil
-    elsif !password.empty?
+    if password.present? && !password.empty?
       config = Rails.application.config.argon
       argon = Argon2::Password.new(t_cost: config[:t_cost], m_cost: config[:m_cost], secret: self.class.pass_hash_key)
       self.password_digest = argon.create(password)
