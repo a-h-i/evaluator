@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_23_013456) do
+ActiveRecord::Schema.define(version: 2019_02_26_065245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2019_02_23_013456) do
     t.text "name", null: false
     t.text "description", null: false
     t.boolean "published", default: false, null: false
+    t.index ["created_at", "published"], name: "index_courses_on_created_at_and_published"
     t.index ["name"], name: "courses_name_key", unique: true
   end
 
@@ -36,6 +37,8 @@ ActiveRecord::Schema.define(version: 2019_02_23_013456) do
     t.boolean "quiz", default: false, null: false
     t.boolean "reruning_submissions", default: false, null: false
     t.index ["course_id", "name"], name: "projects_course_id_name_key", unique: true
+    t.index ["course_id"], name: "index_projects_on_course_id"
+    t.index ["created_at", "published"], name: "index_projects_on_created_at_and_published", order: { created_at: :desc }
   end
 
   create_table "results", force: :cascade do |t|
@@ -56,6 +59,7 @@ ActiveRecord::Schema.define(version: 2019_02_23_013456) do
     t.bigserial "student_id", null: false
     t.text "team"
     t.index ["course_id", "student_id"], name: "student_course_registrations_course_id_student_id_key", unique: true
+    t.index ["student_id", "course_id"], name: "index_student_course_registrations_on_student_id_and_course_id"
   end
 
   create_table "submissions", force: :cascade do |t|
@@ -63,6 +67,8 @@ ActiveRecord::Schema.define(version: 2019_02_23_013456) do
     t.bigserial "submitter_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "mime_type", null: false
+    t.text "file_name", null: false
     t.text "team"
   end
 

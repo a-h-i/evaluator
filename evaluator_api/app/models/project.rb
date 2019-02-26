@@ -21,10 +21,13 @@ class Project < ApplicationRecord
   belongs_to :course
   scope :published, -> { where published: true }
   scope :not_published, -> { where published: false }
-  scope :due, ->  { where 'due_date <= ?', DateTime.now }
-  scope :not_due, -> { where 'due_date > ?', DateTime.now }
-  scope :started, -> { where 'start_date <= ?', DateTime.now }
+  scope :due, -> { where "due_date <= ?", DateTime.now }
+  scope :not_due, -> { where "due_date > ?", DateTime.now }
+  scope :started, -> { where "start_date <= ?", DateTime.now }
   validates :name, :due_date, :course, presence: true
-  validates :name, uniqueness: {case_sensitive: false, scope: :course_id}
+  validates :name, uniqueness: { case_sensitive: false, scope: :course_id }
 
+  def viewable_by_user?(user)
+    user.teacher? || (published && StudentCourseRegistration.exists?(student_id: user.id, course_id: course_id))
+  end
 end

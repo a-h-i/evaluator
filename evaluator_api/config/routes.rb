@@ -21,6 +21,13 @@ Rails.application.routes.draw do
         post :registration, action: :register
         delete :registration, action: :unregister
       end
+      resources :projects, shallow: true, except: [:new] do
+        resources :submissions, shallow: true, except: [:destroy, :new, :update] do
+          member do
+            get :download
+          end
+        end
+      end
     end
   end
 end

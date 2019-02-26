@@ -296,21 +296,22 @@ RSpec.describe Api::UsersController, type: :controller do
       expect(user.verified).to be false
     end
   end
-  context ".resend_verify" do
-    let(:user) { FactoryBot.create(:teacher, verified: false) }
-    it "does not resend to verified users" do
-      user.verified = true
-      user.save!
-      get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
-      expect(response).to be_bad_request
-    end
-    it "sends email" do
-      allow(MessagingService).to receive(:send_verification_email)
-      get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
-      expect(response).to be_success
-      expect(MessagingService).to have_received(:send_verification_email)
-    end
-  end
+
+  # context ".resend_verify" do
+  #   let(:user) { FactoryBot.create(:teacher, verified: false) }
+  #   it "does not resend to verified users" do
+  #     user.verified = true
+  #     user.save!
+  #     get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
+  #     expect(response).to be_bad_request
+  #   end
+  #   it "sends email" do
+  #     allow(MessagingService).to receive(:send_verification_email)
+  #     get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
+  #     expect(response).to be_success
+  #     expect(MessagingService).to have_received(:send_verification_email)
+  #   end
+  # end
 
   context ".destroy" do
     let(:teacher) { FactoryBot.create(:teacher) }
