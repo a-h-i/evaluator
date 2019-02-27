@@ -5,7 +5,7 @@
 
 
 ## Tunnel to Database from a webserver instance
-`ssh -L 127.0.0.1:5432:127.0.0.1:5432 db.metguc -i ~/.ssh/ident_file`
+`ssh -vN -L 127.0.0.1:5432:127.0.0.1:5432 db.metguc -i ~/.ssh/ident_file`
 
 ## Allowing someone to connect to this instance over SSH
 

@@ -1,0 +1,18 @@
+[Unit]
+Description=SSH Tunnel to web service instance 1
+After=network.target
+
+[Service]
+Type=simple
+Environment="LOCAL_PORT=3000"
+Environment="REMOTE_PORT=3000"
+Environment="REMOTE_HOST="
+ExecStart=/usr/bin/ssh -N -o ServerAliveInterval=20 -o ServerAliveCountMax=2 -L 127.0.0.1:${LOCAL_PORT}:127.0.0.1:${REMOTE_PORT} ${REMOTE_HOST} -i ~/.ssh/ident_file 
+RestartSec=5
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ssh_web_1
+StartLimitIntervalSec=0
+[Install]
+WantedBy=multi-user.target

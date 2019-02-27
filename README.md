@@ -6,7 +6,7 @@ Evaluator
 Node version `11.6.0`
 
 
-Ruby version `2.2.4`
+Ruby version `2.6.1`
 
 
 Check wiki for additional information.
@@ -78,3 +78,9 @@ Development server is now running on port 8000
 JOB Queue
 =========
 To run the job queue `QUEUE=* rake environment resque:work`
+
+
+
+Deployment
+==========
+Documentation for deployment can be found [here](deployment/README.md)
