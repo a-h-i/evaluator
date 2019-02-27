@@ -20,8 +20,13 @@ class Course < ApplicationRecord
   has_many :students, through: :student_course_registrations, class_name: 'User'
   scope :published, -> { where published: true }
   
-  def register(student)
-    students << student
+  def register(student, team = nil)
+    if team.nil?
+      students << student
+    else
+      StudentCourseRegistration.create(course: self, student: student, team: team)
+    end
+
   end
   def unregister(student)
     students.delete student

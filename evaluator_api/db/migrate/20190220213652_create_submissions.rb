@@ -5,6 +5,7 @@ class CreateSubmissions < ActiveRecord::Migration[5.2]
       id BIGSERIAL PRIMARY KEY,
       project_id BIGSERIAL REFERENCES projects (id) NOT NULL,
       submitter_id BIGSERIAL REFERENCES users (id) NOT NULL,
+      course_id BIGSERIAL REFERENCES courses (id) NOT NULL,
       created_at timestamp without time zone NOT NULL default localtimestamp,
       updated_at timestamp without time zone NOT NULL,
       mime_type text NOT NULL,

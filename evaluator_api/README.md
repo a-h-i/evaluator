@@ -28,3 +28,7 @@ For environment variables read [this](../doc/ENV_VARS.md) document.
 ## Database creation
 For information on how to create the postgresql database please checkout [this](../doc/DB_SETUP.md) document.
 
+
+
+## Running mailer background workers
+`bundle exec sidekiq -q mailers`

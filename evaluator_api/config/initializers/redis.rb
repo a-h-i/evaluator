@@ -11,6 +11,14 @@ Rails.application.configure do
                   port: ENV.fetch("EVALUATOR_REDIS_MESSAGING_PORT", 6379), db: ENV.fetch("EVALUATOR_REDIS_MESSAGING_DB", 2),
                   inherit_socket: true)
     config.cache_store = :redis_cache_store, {redis: config.redis, compress: true, compress_threshold: 1.kilobytes}
+    Sidekiq.configure_server do |sq|
+      sq.redis = ConnectionPool.new(size: 1) {config.messaging_redis}
+    end
+    
+    Sidekiq.configure_client do |sq|
+      sq.redis = ConnectionPool.new(size: 1) {config.messaging_redis}
+    end  
   end
   config.create_redis_connections.call(config)
+  
 end

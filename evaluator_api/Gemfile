@@ -13,7 +13,7 @@ gem 'bootsnap', '~> 1.1', require: false
 # gem 'jbuilder', '~> 2.5'
 
 
-
+gem 'sidekiq', '~> 5.2'
 gem 'pry-rails'
 gem 'redis', '~> 4.1'
 gem 'hiredis', '~> 0.6'
@@ -29,6 +29,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 5.0'
   gem 'faker', '~> 1.9'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'email_spec', '~> 2.2'
 end
 
 group :development do

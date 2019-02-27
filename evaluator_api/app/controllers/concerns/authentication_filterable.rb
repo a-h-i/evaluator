@@ -51,6 +51,7 @@ module AuthenticationFilterable
       token = header.gsub(pattern, '')
       @current_user = User.find_by_token token
       raise ForbiddenError, error_messages[:unverified_login] unless @current_user.verified?
+      raise ForbiddenError, error_messages[:unverified_login] unless !@current_user.teacher? || @current_user.verified_teacher?
     else
       raise AuthenticationError
     end

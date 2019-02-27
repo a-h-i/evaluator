@@ -16,10 +16,13 @@
 require 'factory_bot'
 
 Dir[File.join(__dir__, 'support', '*.rb')].each { |file| require file }
-
+require "email_spec"
+require "email_spec/rspec"
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
+  config.include EmailSpec::Helpers
+  config.include EmailSpec::Matchers
   config.full_backtrace = false
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest

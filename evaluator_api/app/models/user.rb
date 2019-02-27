@@ -34,6 +34,7 @@ class User < ApplicationRecord
   validate :super_user_teacher
   scope :students, -> { where student: true }
   scope :teachers, -> { where student: false } 
+  scope :admins, -> { where super_user: true }
   has_many :submissions, inverse_of: :submitter, foreign_key: :submitter_id,
                          dependent: :destroy
   # dependent deletion for registration done at db level                         
@@ -63,6 +64,12 @@ class User < ApplicationRecord
     verified? && (student? || verified_teacher?)
   end
 
+  def self.queriable_fields
+    un_permitted = [:created_at, :updated_at, :password_digest]
+    all_fields = User.attribute_names.map(&:to_sym)
+    all_fields - un_permitted
+  end
+
   private
 
   def super_user_teacher
@@ -90,4 +97,6 @@ class User < ApplicationRecord
       end
     end
   end
+
+
 end

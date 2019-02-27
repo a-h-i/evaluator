@@ -34,5 +34,6 @@ module EvaluatorApi
     config.api_only = true
     config.timezone = :utc
     config.active_record.default_timezone = :utc
+    config.active_job.queue_adapter = :sidekiq unless Rails.env.test?
   end
 end

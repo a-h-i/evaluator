@@ -1,0 +1,12 @@
+<h1>Evaluator password reset!</h1>
+<p>Hello, <%= @user.name %>.</p>
+<p>You have requested a password reset, click
+<a href="https://metguc.in/#/reset?token=<%= @token %>">here</a> to reset your password.
+</p>
+<p> If you are having trouble following that link just copy and paste this URL https://metguc.in/#/reset?token=<%= @token %> </p>
+
+<% if @user.student? %>
+  <p>If you did not request a password reset simply ignore this email</p>
+<% else %>
+  <p>Since you are a teacher if you didn't request a reset please report this immediatly to the course supervisor!</p>
+<% end %>

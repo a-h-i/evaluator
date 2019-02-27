@@ -30,4 +30,10 @@ class Project < ApplicationRecord
   def viewable_by_user?(user)
     user.teacher? || (published && StudentCourseRegistration.exists?(student_id: user.id, course_id: course_id))
   end
+
+  def can_submit?
+    due_date.utc > DateTime.now.utc && start_date.utc <= DateTime.now.utc
+  end
+
+  
 end

@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2019_02_26_065245) do
   create_table "submissions", force: :cascade do |t|
     t.bigserial "project_id", null: false
     t.bigserial "submitter_id", null: false
+    t.bigserial "course_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "mime_type", null: false
@@ -110,6 +111,7 @@ ActiveRecord::Schema.define(version: 2019_02_26_065245) do
   add_foreign_key "results", "test_suites", name: "results_test_suite_id_fkey", on_delete: :cascade
   add_foreign_key "student_course_registrations", "courses", name: "student_course_registrations_course_id_fkey", on_delete: :cascade
   add_foreign_key "student_course_registrations", "users", column: "student_id", name: "student_course_registrations_student_id_fkey", on_delete: :cascade
+  add_foreign_key "submissions", "courses", name: "submissions_course_id_fkey"
   add_foreign_key "submissions", "projects", name: "submissions_project_id_fkey"
   add_foreign_key "submissions", "users", column: "submitter_id", name: "submissions_submitter_id_fkey"
   add_foreign_key "test_suites", "projects", name: "test_suites_project_id_fkey"
