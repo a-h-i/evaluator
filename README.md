@@ -9,75 +9,13 @@ Node version `11.6.0`
 Ruby version `2.6.1`
 
 
-Check wiki for additional information.
+Check deployment folder for additional information.
 
 
 
-
-
-
-Install backend app dependencies
-================================
-`bundle install`
-
-Tests
-=====
-
-`bundle exec rake`
-
-
-
-Install frontend app
-====================
-`cd frontend`
-
-
-`npm install`
-
-
-`bower install`
-
-
-Building frontend
-=================
-All the following commands inside `frontend` directory.
-
-
-
-
-
-deploy to /srv/www (default) `npm run deploy`
-
-
-deploy in client/dist directory `npm run dist`
-
-
-
-
-
-
-Run development version
-=======================
-Make sure db is created and migrated.
-
-
-`bundle exec rails s &`
-
-
-`cd frontend`
-
-
-`npm run dev`
-
-
-Development server is now running on port 8000
-
-
-
-
-JOB Queue
-=========
-To run the job queue `QUEUE=* rake environment resque:work`
+Running The Backend
+==================
+[Check this document](evaluator_api/README.md)
 
 
 
