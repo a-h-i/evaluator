@@ -24,7 +24,7 @@ class Course < ApplicationRecord
     if team.nil?
       students << student
     else
-      StudentCourseRegistration.create(course: self, student_id: student.id, team: team)
+      StudentCourseRegistration.create(course: self, student: student, team: team)
     end
 
   end
