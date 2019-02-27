@@ -4,7 +4,7 @@ worker_processes 2
 
 working_directory "/root/evaluator/evaluator_api"
 
-listen 127.0.0.1:3000
+listen '127.0.0.1:3000'
 
 # Kill workers ater 50 seconds
 timeout 50
