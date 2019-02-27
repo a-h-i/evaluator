@@ -1,0 +1,11 @@
+[Unit]
+Description=Mount evaluator data
+
+
+[Mount]
+What=root@10.135.123.240:/mnt/evaluator_data
+Where=/mnt/evaluator
+Type=fuse.sshfs
+Options=IdentityFile=/root/.ssh/metguc,reconnect
+[Install]
+WantedBy=multi-user.target

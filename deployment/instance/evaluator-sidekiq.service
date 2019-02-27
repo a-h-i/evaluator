@@ -1,0 +1,21 @@
+[Unit]
+Description=Email processing background workers for evaluator
+After=network.target syslog.target
+Requires=redis.service postgresql-port-forward.service messaging-redis-port-forward.service
+
+[Service]
+User=root
+Group=root
+# Change for your own working directory
+WorkingDirectory=/root/evaluator/evaluator_api
+ExecStart=/bin/bash -lc '/root/.rbenv/shims/bundle exec sidekiq -e production -C ../deployment/instance/sidekiq.yml'
+Type=simple
+Environment=MALLOC_ARENA_MAX=2
+RestartSec=1
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sidekiq
+
+[Install]
+WantedBy=multi-user.target

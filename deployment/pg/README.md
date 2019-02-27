@@ -59,3 +59,4 @@ Generate a random password that is preferrably long. I suggest ruby SecureRandom
 `CREATE ROLE evaluator_api WITH CREATEDB LOGIN PASSWORD password_variable_in_quotes;
 
 ## Configure Firewall
+[Use this configuration](../misc/ssh_only_firewall.md)
