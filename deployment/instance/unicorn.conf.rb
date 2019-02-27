@@ -15,7 +15,7 @@ preload_app true
 
 stderr_path "/var/log/evaluator/unicorn.err.log"
 stdout_path "/var/log/evaluator/unicorn.out.log"
-check_client_connections false
+check_client_connection false
 run_once = true
 
 before_fork do |server, worker|
