@@ -18,8 +18,8 @@ Rails.application.routes.draw do
     end
     resources :courses, except: [:new] do
       member do
-        post :registration, action: :register
-        delete :registration, action: :unregister
+        # post :registration, action: :register
+        # delete :registration, action: :unregister
       end
       resources :projects, shallow: true, except: [:new] do
         resources :submissions, shallow: true, except: [:destroy, :new, :update] do
