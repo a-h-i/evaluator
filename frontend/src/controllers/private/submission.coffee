@@ -8,8 +8,8 @@ angular.module 'evaluator'
         $scope.project && !$scope.project.is_due &&
           $scope.project.started
 
-      $scope.teamGradeApplicable = UserAuth.user.student
-      $scope.team = UserAuth.user.team
+      # $scope.teamGradeApplicable = UserAuth.user.student
+      $scope.teamGradeApplicable = false
       $scope.teamGradeSubmissions = []
       $scope.submissions = []
       $scope.submissionClasses = ['submission-accent-one',

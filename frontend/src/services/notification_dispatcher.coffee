@@ -1,5 +1,5 @@
 angular.module 'evaluator'
-  .factory 'NotificationDispatcher', (FayeClient) ->
+  .factory 'NotificationDispatcher',  ->
     class NotificationDispatcher
       constructor: ->
         @subscribers = {}
@@ -15,10 +15,10 @@ angular.module 'evaluator'
       # Used internally
       subscribe: (url, callback) ->
         (@listeners[url]or=[]).push callback
-        if url not of @subscribers
-          receiveHandler = (message) =>
-            @handler url, message
-          FayeClient.subscribe url, receiveHandler
+        # if url not of @subscribers
+        #   receiveHandler = (message) =>
+        #     @handler url, message
+        #   FayeClient.subscribe url, receiveHandler
 
       subscribeSuite: (suite, callback) ->
         url = "/notifications/test_suites/#{suite.id}"

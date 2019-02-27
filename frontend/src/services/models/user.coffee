@@ -6,7 +6,6 @@ angular.module 'evaluator'
         _.assign @, @resource
 
       reload: ->
-        console.log(@resource.id)
         UsersResource.get({id: @resource.id}).$promise.then (resource) =>
           @resource = resource
           return @
@@ -28,6 +27,12 @@ angular.module 'evaluator'
       @property 'id',
         get: ->
           @resource.id
+      
+      @property 'study_group',
+        get: ->
+          @resource.study_group
+        set: (value) ->
+          @resource.study_group = value
       
       @property 'student',
         get: ->
@@ -51,7 +56,9 @@ angular.module 'evaluator'
 
       @property 'full_name',
         get: ->
-          @resource.full_name
+          @resource.name
+        set: (val) ->
+          @resource.name = val
 
       @property 'created_at',
         get: ->
@@ -78,12 +85,6 @@ angular.module 'evaluator'
           @resource.guc_prefix
         set: (value) ->
           @resource.guc_prefix = value
-
-      @property 'team',
-        get: ->
-          @resource.team
-        set: (value) ->
-          @resource.team = value
 
       @property 'password',
         get: ->

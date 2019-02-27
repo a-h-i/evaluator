@@ -35,6 +35,6 @@ production:
   <<: *default
   database: evaluator_api_production
   password: <%= ENV['EVALUATOR_API_DATABASE_PASSWORD'] %>
-  host: <%= ENV['EVALUATOR_API_DATABASE_HOST'] %>
-  port: <%= ENV['EVALUATOR_API_DATABASE_PORT'] %>
+  host: <%= ENV.fetch('EVALUATOR_API_DATABASE_HOST', 'localhost') %>
+  port: <%= ENV.fetch('EVALUATOR_API_DATABASE_PORT', 5432) %>
   min_messages: warning

@@ -9,7 +9,7 @@
 <div class="project-ctrls flex-row-between">
   <button class="btn-green" data-ng-if="!project.published && isAdmin" data-ng-click="publish()">Publish</button>
   <button class="btn-red" data-ng-if="project.published && isAdmin" data-ng-click="unpublish()">Unpublish</button>
-  <button class="icon-link" data-ng-if="!project.reruning_submissions && isAdmin" data-ng-click="rerunSubmissions()"><i class="icon material-icons">refresh</i> Rerun Submissions</button>
+  <!-- <button class="icon-link" data-ng-if="!project.reruning_submissions && isAdmin" data-ng-click="rerunSubmissions()"><i class="icon material-icons">refresh</i> Rerun Submissions</button> -->
   <md-button class="md-fab md-mini md-primary" data-ng-if="canEdit" data-ng-click="showEditDialog($event)">
     <md-icon md-font-set="material-icons">mode_edit</md-icon>
   </md-button>
@@ -20,7 +20,7 @@
   data-ng-if="project.published">Submit</button></a>
 </div>
 <x-project data-data="project"></x-project>
-
+<!-- 
 <div id="suitesWrapper">
 <header>
   <h2>Suites</h2>
@@ -51,5 +51,5 @@
       <i class="material-icons spinner">refresh</i>
     </li>
   </ul>
-</div>
+</div> -->
 </section>

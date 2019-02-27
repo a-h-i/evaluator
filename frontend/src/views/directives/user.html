@@ -2,11 +2,10 @@
   <p class="name break-word">{{user.full_name}}</p>
   <p class="email break-word">{{user.email}}</p>
   <p data-ng-if="user.student">{{user.guc_id}}</p>
-  <p data-ng-if="user.student">Team: {{user.team}}</p>
   <p data-ng-if="user.student">Major: {{user.major}}</p>
+  <p data-ng-if="user.student">Study Group: {{user.study_group}}</p>
   <p data-ng-if="user.admin" class="break-word">This is an admin</p>
   <p class="created_at break-word">Created {{user.created_at}}</p>
-
   <div data-ng-if="!noControls" class="user-controls-container">
     <md-button class="md-fab md-mini md-primary" data-ng-if="canEdit" data-ui-sref="private.teacher.user({id: user.id})">
       <md-icon md-font-set="material-icons">mode_edit</md-icon>

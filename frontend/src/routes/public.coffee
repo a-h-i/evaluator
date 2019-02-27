@@ -30,22 +30,22 @@ angular.module 'evaluator'
         $title: ->
           'Evaluator| Login'
 
-    signupState =
-      name: 'public.signup'
-      url: '/signup'
-      views:
-        'pageContent':
-          templateUrl: 'public/signup.html'
-          controller: 'SignupController'
-      resolve:
-        $title: ->
-          'Evaluator| Signup'
+    # signupState =
+    #   name: 'public.signup'
+    #   url: '/signup'
+    #   views:
+    #     'pageContent':
+    #       templateUrl: 'public/signup.html'
+    #       controller: 'SignupController'
+    #   resolve:
+    #     $title: ->
+    #       'Evaluator| Signup'
     
     
 
     verifyAccount =
       name: 'public.verify'
-      url: '/verify/:id?token'
+      url: '/verify?token'
       views:
         'pageContent':
           templateUrl: 'generic/wait_message.html'
@@ -53,7 +53,7 @@ angular.module 'evaluator'
 
     resetPass =
       name: 'public.reset'
-      url: '/reset/:id?token'
+      url: '/reset?token'
       views:
         'pageContent':
           templateUrl: 'public/reset.html'
@@ -127,7 +127,6 @@ angular.module 'evaluator'
     $stateProvider
       .state publicState
       .state loginState
-      .state signupState
       .state aboutState
       .state internalErrorState
       .state resetPass

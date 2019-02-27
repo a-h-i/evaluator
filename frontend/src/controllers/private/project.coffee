@@ -86,8 +86,8 @@ angular.module 'evaluator'
         new Suite data, deletedSuiteCallback
 
 
-      suitesPagination = new Pagination ProjectSuitesResource, 'test_suites',
-      {project_id: $stateParams.id}, suiteFactory, defaultPageSize
+      # suitesPagination = new Pagination ProjectSuitesResource, 'test_suites',
+      # {project_id: $stateParams.id}, suiteFactory, defaultPageSize
 
 
 
@@ -101,9 +101,9 @@ angular.module 'evaluator'
       $scope.loadingSuites = true
 
       # Load first page
-      suitesPagination.page(1).then (data) ->
-        $scope.loadingSuites = false
-        addSuitesCallback data, $scope.suites.length
+      # suitesPagination.page(1).then (data) ->
+      #   $scope.loadingSuites = false
+      #   addSuitesCallback data, $scope.suites.length
 
       # Callback for infinite scroll
       $scope.loadMore = ->

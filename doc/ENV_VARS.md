@@ -7,13 +7,9 @@ Environment variables that need to be set
 
 KEY | DESCRIPTION | APPLICABLE ENVIRONMENT
 -----|------------|--------------
-SECRET_KEY_BASE | Rails secret key for cookie signing| production
-JWT_KEY| HMAC key for JWT encoding | Always applicable, but must set in production
-DB_NAME| PG database name | production
-DB_USER| PG username | production
-DB_PASSWORD| PG username password | production
-VERIFICATION_TOKEN_STR_MAX_LENGTH | Max length of the email verification token (used in query param) default is 30| All
-PASS_RESET_TOKEN_STR_MAX_LENGTH | Max length of the password reset token (used in query param) default is 30| All
+EVALUATOR_API_DATABASE_HOST| defaults to localhost | production
+EVALUATOR_API_DATABASE_PORT| defaults to 5432 | production
+EVALUATOR_API_DATABASE_PASSWORD| PG username password | production
 EV_SMTP_HOST| SMTP server address| Development, production
 EV_SMTP_PORT| SMTP server port| Development, production
 SMTP_USERNAME| SMTP user name| Development, production

@@ -11,10 +11,11 @@
 
   <div class="flex-perfect-center-container">
       <div data-ng-if="!submission.done">
-        <p>Processing..</p>
+        <!-- <p>Processing..</p>
         <div class="flex-perfect-center-container">
           <i class="material-icons spinner">refresh</i>
-        </div>
+        </div> -->
+        <p class="created-at">Submitted on: {{submission.created_at}}</p>
       </div>
       <div data-ng-if="submission.done" class="max-width">
         <div data-ng-if="submission.success">

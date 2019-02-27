@@ -67,12 +67,12 @@ novalidate
     </div>
 
     <div class="relative form-line">
-      <input class="material-text" type="text" id="team" name="team"
-      data-ng-model="user.team"
+      <input class="material-text" type="text" id="study_group" name="study_group"
+      data-ng-model="user.study_group"
       required>
-      <label for="team">Team</label>
+      <label for="study_group">Study Group</label>
       <span class="form-field-error"
-      data-ng-class="{hidden: !userForm.team.$error.required}"
+      data-ng-class="{hidden: !userForm.study_group.$error.required}"
       >This field is required</span>
     </div>
 
@@ -93,6 +93,7 @@ novalidate
 
   <fieldset>
     <md-checkbox data-ng-model="user.verified" name="verified">Verified</md-checkbox>
+    <md-checkbox data-ng-if="user.teacher" data-ng-model="user.teacher_verified" name="teacher_verified">Verified Teacher</md-checkbox>
     <md-checkbox data-ng-if="user.teacher" data-ng-model="user.admin" name="superuser">Admin</md-checkbox>
   </fieldset>
 

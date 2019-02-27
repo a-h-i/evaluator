@@ -7,34 +7,34 @@ angular.module 'evaluator'
           @resource = new SubmissionResource data
           @results = []
           @resultIds = []
-          resultFactory = (data) ->
-            new Result data
-          if @resource.results
-            @results = _.map @resource.results, resultFactory
-            Array::push.apply @resultIds, _.map @resource.results, 'id'
+          # resultFactory = (data) ->
+          #   new Result data
+          # if @resource.results
+          #   @results = _.map @resource.results, resultFactory
+          #   Array::push.apply @resultIds, _.map @resource.results, 'id'
 
-          NotificationDispatcher.subscribeSubmission @, (e) =>
-            configurations.then (config) =>
-              if (e.type is
-                  config.notification_event_types.submission_result_ready)
-                    # Add result to results
-                    if e.payload.result.id not in @resultIds
-                      @resultIds.push e.payload.result.id
-                      @results.push resultFactory e.payload.result
-              else if (e.type is
-                  config.notification_event_types.submission_deleted)
-                    @deletedCallback @id
+          # NotificationDispatcher.subscribeSubmission @, (e) =>
+          #   configurations.then (config) =>
+          #     if (e.type is
+          #         config.notification_event_types.submission_result_ready)
+          #           # Add result to results
+          #           if e.payload.result.id not in @resultIds
+          #             @resultIds.push e.payload.result.id
+          #             @results.push resultFactory e.payload.result
+          #     else if (e.type is
+          #         config.notification_event_types.submission_deleted)
+          #           @deletedCallback @id
 
 
-          @resultsPagination = new Pagination ResultsResource, 'results',
-            {submission_id: @id,
-            project_id: @resource.project_id}, resultFactory, 10000
-          if @results.length is 0
-            @resultsPagination.page(1).then (newResults) =>
-              results = _.filter newResults, (result) =>
-                result.id not in @resultIds
-              Array::push.apply @resultIds, _.map results, 'id'
-              @results.push.apply @results, results
+          # @resultsPagination = new Pagination ResultsResource, 'results',
+          #   {submission_id: @id,
+          #   project_id: @resource.project_id}, resultFactory, 10000
+          # if @results.length is 0
+          #   @resultsPagination.page(1).then (newResults) =>
+          #     results = _.filter newResults, (result) =>
+          #       result.id not in @resultIds
+          #     Array::push.apply @resultIds, _.map results, 'id'
+          #     @results.push.apply @results, results
 
         clearResults: ->
           @results.splice 0, @results.length

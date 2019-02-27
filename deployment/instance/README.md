@@ -3,7 +3,7 @@
 # System requriements
 ```
 dnf update -y
-dnf install -y git make gcc cmake policycoreutils-python-utils autoconf gcc-c++ openssl openssl-devel curl firewalld vim readline-devel ruby ruby-devel
+dnf install -y git make gcc cmake policycoreutils-python-utils autoconf gcc-c++ openssl openssl-devel curl firewalld vim readline-devel ruby ruby-devel argon2
 ```
 Restart your system after these updates
 

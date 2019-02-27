@@ -28,7 +28,9 @@
     }
 
     &.processing-submission {
-      border-color: black;
+      // border-color: black;
+      border-color: $md-clr-green-500;
+      background: lighten($md-clr-green-500, 30%);
     }
 
   }

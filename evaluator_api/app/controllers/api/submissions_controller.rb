@@ -13,7 +13,7 @@ class Api::SubmissionsController < ApplicationController
     options = {
       type: @submission.mime_type,
       disposition: "attachment",
-      filename: @submission.created_at.strftime("%Y_%j_%H_%M_%S_%L") +  "_{@submission.id}_{@submission.file_name}",
+      filename: @submission.created_at.strftime("%Y_%j_%H_%M_%S_%L") +  "_#{@submission.id}_#{@submission.file_name}",
     }
     send_file @submission.file_path, options
   end
