@@ -19,7 +19,7 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch('EVALUATOR_API_DB_POOL', 1)
+  pool: <%= ENV.fetch('EVALUATOR_API_DB_POOL', 1) %>
   username: evaluator_api
   password: password
   min_messages: log
