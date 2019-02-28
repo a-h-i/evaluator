@@ -16,7 +16,7 @@ Rails.application.configure do
     end
     
     Sidekiq.configure_client do |sq|
-      sq.redis = ConnectionPool.new(size: 1) {config.messaging_redis}
+      sq.redis = ConnectionPool.new(size: 5) {config.messaging_redis}
     end  
   end
   config.create_redis_connections.call(config)
