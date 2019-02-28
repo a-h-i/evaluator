@@ -13,6 +13,6 @@ Restart=always
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=ssh_web_1
-StartLimitIntervalSec=0
+StartLimitInterval=0
 [Install]
 WantedBy=multi-user.target

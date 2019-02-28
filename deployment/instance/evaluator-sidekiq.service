@@ -1,7 +1,7 @@
 [Unit]
 Description=Email processing background workers for evaluator
 After=network.target syslog.target
-Requires=redis.service postgresql-port-forward.service messaging-redis-port-forward.service
+Requires=redis.service postgresql-port-forward.service messaging-redis-port-forward.service smtp-port-forward.service
 
 [Service]
 User=root
