@@ -9,7 +9,7 @@ angular.module 'evaluator'
       $scope.resetPassword = ->
         return if $scope.processing
         $scope.processing = true
-        $http.put("/api/users/#{$stateParams.id}/confirm_reset.json",
+        $http.put("/api/users/confirm_reset.json",
           {token: $stateParams.token, pass: $scope.userData.password}
         ).then ->
           $scope.processing = false
