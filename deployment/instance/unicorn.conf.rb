@@ -6,7 +6,6 @@ working_directory "/root/evaluator/evaluator_api"
 
 listen '127.0.0.1:3000'
 
-# Kill workers ater 50 seconds
 timeout 50
 
 pid "/var/run/evaluator/unicorn.pid"
@@ -32,12 +31,7 @@ before_fork do |server, worker|
   after_fork do |server, worker|
   
     ActiveRecord::Base.establish_connection
-  
-    # if preload_app is true, then you may also want to check and
-    # restart any other shared sockets/descriptors such as Memcached,
-    # and Redis.  TokyoCabinet file handles are safe to reuse
-    # between any number of forked children (assuming your kernel
-    # correctly implements pread()/pwrite() system calls)
+
     Rails.application.config.create_redis_connections(Rails.application.config)
   end
 end
