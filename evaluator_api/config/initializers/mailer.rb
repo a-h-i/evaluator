@@ -16,7 +16,7 @@ Rails.application.configure do
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smpt_settings = {
       address: ENV.fetch("EV_SMTP_HOST", "localhost"),
-      port: ENV.fetch("EV_SMTP_PORT", 465),
+      port: ENV.fetch("EV_SMTP_PORT", 25),
     }
   end
 end
