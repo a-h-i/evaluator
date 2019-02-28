@@ -217,73 +217,73 @@ RSpec.describe Api::CoursesController, type: :controller do
       end.to change(Course, :count).by(-1)
     end
   end
-  context ".register" do
-    let(:student) { FactoryBot.create(:student) }
-    let(:teacher) { FactoryBot.create(:teacher) }
-    let(:course) { FactoryBot.create(:course) }
-    let(:published_course) { FactoryBot.create(:course, published: true) }
-    it "disallows unauthorized" do
-      expect do
-        post :register, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_unauthorized
-    end
-    it "disallows registration to unpublished course" do
-      expect do
-        set_token student.token
-        post :register, format: :json, params: { id: course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_forbidden
-    end
-    it "disallows registration by teacher" do
-      expect do
-        set_token teacher.token
-        post :register, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_forbidden
-    end
+  # context ".register" do
+  #   let(:student) { FactoryBot.create(:student) }
+  #   let(:teacher) { FactoryBot.create(:teacher) }
+  #   let(:course) { FactoryBot.create(:course) }
+  #   let(:published_course) { FactoryBot.create(:course, published: true) }
+  #   it "disallows unauthorized" do
+  #     expect do
+  #       post :register, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_unauthorized
+  #   end
+  #   it "disallows registration to unpublished course" do
+  #     expect do
+  #       set_token student.token
+  #       post :register, format: :json, params: { id: course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_forbidden
+  #   end
+  #   it "disallows registration by teacher" do
+  #     expect do
+  #       set_token teacher.token
+  #       post :register, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_forbidden
+  #   end
 
-    it "allows registration by student" do
-      expect do
-        set_token student.token
-        post :register, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by 1
-      expect(response).to be_created
-    end
-  end
-  context '.unregister' do
-    let(:student) { FactoryBot.create(:student) }
-    let(:teacher) { FactoryBot.create(:teacher) }
-    let(:course) { FactoryBot.create(:course) }
-    let(:published_course) { FactoryBot.create(:course, published: true) }
-    it 'disallows unauthorized' do
-      expect do
-        delete :unregister, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_unauthorized
-    end
-    it 'disallows unregistration to unpublished course' do
-      expect do
-        set_token student.token
-        delete :unregister, format: :json, params: { id: course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_forbidden
-    end
-    it 'disallows unregistration by teacher' do
-      expect do
-        set_token teacher.token
-        delete :unregister, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by 0
-      expect(response).to be_forbidden
-    end
+  #   it "allows registration by student" do
+  #     expect do
+  #       set_token student.token
+  #       post :register, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 1
+  #     expect(response).to be_created
+  #   end
+  # end
+  # context '.unregister' do
+  #   let(:student) { FactoryBot.create(:student) }
+  #   let(:teacher) { FactoryBot.create(:teacher) }
+  #   let(:course) { FactoryBot.create(:course) }
+  #   let(:published_course) { FactoryBot.create(:course, published: true) }
+  #   it 'disallows unauthorized' do
+  #     expect do
+  #       delete :unregister, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_unauthorized
+  #   end
+  #   it 'disallows unregistration to unpublished course' do
+  #     expect do
+  #       set_token student.token
+  #       delete :unregister, format: :json, params: { id: course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_forbidden
+  #   end
+  #   it 'disallows unregistration by teacher' do
+  #     expect do
+  #       set_token teacher.token
+  #       delete :unregister, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by 0
+  #     expect(response).to be_forbidden
+  #   end
 
-    it 'allows unregistration by student' do
-      published_course.register student
-      expect do
-        set_token student.token
-        delete :unregister, format: :json, params: { id: published_course.id }
-      end.to change(StudentCourseRegistration, :count).by -1
-      expect(response).to be_success
-    end
-  end
+  #   it 'allows unregistration by student' do
+  #     published_course.register student
+  #     expect do
+  #       set_token student.token
+  #       delete :unregister, format: :json, params: { id: published_course.id }
+  #     end.to change(StudentCourseRegistration, :count).by -1
+  #     expect(response).to be_success
+  #   end
+  # end
 end

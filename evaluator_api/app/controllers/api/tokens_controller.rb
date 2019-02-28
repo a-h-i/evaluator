@@ -1,11 +1,7 @@
 class Api::TokensController < ApplicationController
 
   def create
-    find_hash = {email: token_params[:email].downcase}
-    user = User.cache_fetch(find_hash) do
-      User.find_by(find_hash)
-    end
-    authenticate_user(user)
+    user = User.login(token_params[:email], token_params[:password])
     render json: {
       token: user.token(token_params[:expiration]),
       user: user,

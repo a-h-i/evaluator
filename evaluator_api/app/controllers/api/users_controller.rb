@@ -14,7 +14,7 @@ class Api::UsersController < ApplicationController
   end
 
   # Confirm password reset
-  # Expects reset to be present as token field in query
+  # Expects reset token field in query
   def confirm_reset
     
     new_pass = params[:password]

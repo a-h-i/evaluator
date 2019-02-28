@@ -15,18 +15,21 @@ module Cachable
     end
 
     def cache_fetch(key, **opts)
+      return yield
       val = cache_read(key, opts)
       return val unless val.nil?
       val = yield
       cache_write(key, val, opts)
     end
   
-    def cache_read(key, **opts)      
+    def cache_read(key, **opts)
+      return nil      
       val = redis.get normalize_key(key)
       deserialize_cache(val)
     end
   
     def cache_write(key, value, **opts)
+      return key
       normalized_key = normalize_key(key)
       serialized_value = serialize_cache(value)
       redis.set normalized_key, serialized_value

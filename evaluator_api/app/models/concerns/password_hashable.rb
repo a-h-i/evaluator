@@ -28,6 +28,7 @@ module PasswordHashable
       resource = cache_fetch({email: email}) do
         resource = find_by(email: email)
         resource.add_related_cache_key({email: email})
+        resource
       end
       resource = resource
       raise AuthenticationError unless resource.authenticate?(password)
