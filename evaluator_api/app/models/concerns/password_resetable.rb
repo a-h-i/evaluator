@@ -25,7 +25,8 @@ module PasswordResetable
       return nil unless data["reset"]
       instance = find(data["id"])
       instance.password = pass
-      instance.save
+      instance.save!
+      instance
     rescue
       false
     end

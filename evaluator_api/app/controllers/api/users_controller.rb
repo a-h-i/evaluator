@@ -19,8 +19,13 @@ class Api::UsersController < ApplicationController
     
     new_pass = params[:password]
     token = params[:token]
-    if User.confirm_reset token, new_pass
-      head :no_content
+    if (user = User.confirm_reset token, new_pass)
+      render json: {
+        data: {
+          token: user.token,
+          user: user
+        }
+      }
     else
       render json: {message: error_messages[:incorrect_reset_token]},
              status: :unprocessable_entity
@@ -32,21 +37,11 @@ class Api::UsersController < ApplicationController
     super
   end
 
-  def resend_verify
-    if !@user.verified?
-      send_verification
-      head :no_content
-    else
-      render json: {message: error_messages[:already_verified]},
-             status: :bad_request
-    end
-  end
-
   # Verifies user account
   # Expects token to be present as token field in query
   def verify
     token = params[:token]
-    @user = User.verify token
+    @user = User.verify_email_token token
     if @user
       render json: {
         data: {

@@ -284,14 +284,14 @@ RSpec.describe Api::UsersController, type: :controller do
   context '.verify' do
     let(:user) { FactoryBot.create(:teacher, verified: false) }
     it 'accepts verification token' do
-      token = user.send_verification_email
-      put :verify, params: {id: user.id, token: token}
+      token = user.gen_email_verification_token
+      put :verify, params: { token: token}
       user.reload
       expect(user.verified).to be true
     end
     it 'rejects invalid tokens' do
-      token = FactoryBot.create(:teacher).send_verification_email
-      put :verify, params: {id: user.id, token: token}
+      token = FactoryBot.create(:teacher).gen_email_verification_token
+      put :verify, params: {token: token}
       user.reload
       expect(user.verified).to be false
     end

@@ -190,6 +190,27 @@ RSpec.describe User, type: :model do
     end
   end
 
+  context 'password_reset' do
+    let(:user) {FactoryBot.create(:student, password: 'old password')}
+    it 'generates valid token' do
+      token = user.gen_pass_reset_token
+      old_digest = user.password_digest
+      found = User.confirm_reset token, 'new password'
+      expect(found).not_to be nil
+      expect(found.password_digest).not_to eql(old_digest)
+      expect(found.authenticate? 'new password').to be true
+    end
+  end
+
+  context 'verification' do
+    let(:user) {FactoryBot.create(:student, verified: false)}
+    it 'generates valid token' do
+      token = user.gen_email_verification_token
+      verified = User.verify_email_token token
+      expect(verified.verified).to be true
+    end
+  end
+
 
   
 end

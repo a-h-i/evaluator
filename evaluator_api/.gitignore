@@ -24,4 +24,5 @@
 
 spec/state
 TODO.md
+CHANGES.md
 Gemfile.lock
