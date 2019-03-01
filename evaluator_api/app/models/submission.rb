@@ -68,7 +68,7 @@ class Submission < ApplicationRecord
   def get_file_path(file_name)
     timestamp = created_at.strftime('%Y_%j_%H_%M_%S_%L')
     ext = File.extname(file_name).empty? ? ".zip" : File.extname(file_name)
-    Rails.application.config.submissions_path + "#{id}_#{timestamp}#{ext}"
+    File.join Rails.application.config.submissions_path,  "#{id}_#{timestamp}#{ext}"
   end
 
   def is_viewable_by?(user)
