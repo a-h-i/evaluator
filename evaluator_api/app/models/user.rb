@@ -17,6 +17,11 @@
 #  super_user       :boolean          default(FALSE), not null
 #  student          :boolean          default(TRUE), not null
 #
+# Indexes
+#
+#  users_created_at_asc  (created_at)
+#  users_email_key       (email) UNIQUE
+#
 
 class User < ApplicationRecord
   include JwtAuthenticatable

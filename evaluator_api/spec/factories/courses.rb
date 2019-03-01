@@ -9,6 +9,11 @@
 #  description :text             not null
 #  published   :boolean          default(FALSE), not null
 #
+# Indexes
+#
+#  courses_name_key                           (name) UNIQUE
+#  index_courses_on_created_at_and_published  (created_at,published)
+#
 
 FactoryBot.define do
   factory :course do

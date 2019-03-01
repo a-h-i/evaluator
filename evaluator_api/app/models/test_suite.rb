@@ -14,6 +14,10 @@
 #  hidden     :boolean          default(TRUE), not null
 #  ready      :boolean          default(FALSE), not null
 #
+# Indexes
+#
+#  test_suites_project_id_name_key  (project_id,name) UNIQUE
+#
 
 class TestSuite < ApplicationRecord
   belongs_to :project

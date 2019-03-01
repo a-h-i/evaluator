@@ -13,6 +13,12 @@
 #  quiz                 :boolean          default(FALSE), not null
 #  reruning_submissions :boolean          default(FALSE), not null
 #
+# Indexes
+#
+#  index_projects_on_course_id                 (course_id)
+#  index_projects_on_created_at_and_published  (created_at DESC,published)
+#  projects_course_id_name_key                 (course_id,name) UNIQUE
+#
 
 require 'rails_helper'
 

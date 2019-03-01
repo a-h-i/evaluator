@@ -28,3 +28,4 @@ EVALUATOR_REDIS_MESSAGING_DB| redis db | should be different than cache value
 EV_SUBMISSIONS_PATH| defaults to /mnt/evaluator/submissions | need to be set in production
 EV_TEST_SUITE_PATH| defaults to /mnt/evaluator/test_suites | need to be set in production
 RAILS_LOG_TO_STDOUT| Set to TRUE with unicorn deployments | should be set in production, has no effect on non production environments
+EV_MAX_SUBMISSIONS_PER_STUDENT| Max submissions per student, per project. Defaults to 5.| all
