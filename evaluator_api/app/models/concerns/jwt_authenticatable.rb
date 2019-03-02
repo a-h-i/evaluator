@@ -15,7 +15,7 @@ module JwtAuthenticatable
     # Raises AuthenticationError if incorrect authentication data supplied
     # returns resource, expiration_in_seconds
     def decode_token(token)
-      decoded = JWT.decode(token, jwt_hash_key, true, {algorithm: "HS512", verify_iat: true})
+      decoded = JWT.decode(token, jwt_hash_key, true, {algorithms: ["HS512"], verify_iat: true})
       data = decoded.first["data"]
       resource = cache_fetch({id: data["id"]}) { find(data["id"]) }
       raise AuthenticationError unless Rack::Utils.secure_compare(resource.password_hash, data["discriminator"])

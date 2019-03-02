@@ -1,0 +1,28 @@
+{
+  "name": "pub_sub_server",
+  "version": "1.0.0",
+  "description": "Notifications server for evaluator",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ahmed H. Ismail <ahm3d.hisham@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=11.6.0 < 12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a-h-i/evaluator.git"
+  },
+  "dependencies": {
+    "http-shutdown": "^1.2.0",
+    "jsonwebtoken": "^8.5.0",
+    "pg": "^7.8.1",
+    "pg-native": "^3.0.0",
+    "safe-compare": "^1.1.4",
+    "socket.io": "^2.2.0",
+    "socket.io-redis": "^5.2.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v15.4.0"
+  }
+}
