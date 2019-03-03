@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_01_223037) do
+ActiveRecord::Schema.define(version: 2019_03_03_050334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 2019_03_01_223037) do
     t.boolean "success", null: false
     t.boolean "hidden", null: false
     t.jsonb "detail", null: false
+    t.index ["submission_id"], name: "index_results_on_submission_id"
   end
 
   create_table "student_course_registrations", force: :cascade do |t|

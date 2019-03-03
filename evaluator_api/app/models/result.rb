@@ -14,6 +14,10 @@
 #  hidden        :boolean          not null
 #  detail        :jsonb            not null
 #
+# Indexes
+#
+#  index_results_on_submission_id  (submission_id)
+#
 
 class Result < ApplicationRecord
   include Cachable

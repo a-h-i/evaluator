@@ -23,11 +23,14 @@ class Submission < ApplicationRecord
   belongs_to :project
   belongs_to :submitter, class_name: "User", inverse_of: :submissions
   belongs_to :course
+  # dependent results are destroyed on the db level
+  has_many :results
   before_validation :set_values
   before_validation {self.file_name = self.class.sanitize_file_name(self.file_name) unless self.file_name.nil?}
   validates :project, :submitter, presence: true
   validate :published_project_and_course
   validate :project_can_submit
+  
   
   def file=(val)
     self.file_attachable_storage_file_object = val
