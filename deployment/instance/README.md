@@ -3,14 +3,14 @@
 # System requriements
 ```
 dnf update -y
-dnf install -y git make gcc cmake policycoreutils-python-utils autoconf gcc-c++ openssl openssl-devel curl firewalld vim readline-devel ruby ruby-devel argon2 postgresql-devel postgresql-contrib libsodium  policycoreutils-sandbox boost-devel
+dnf install -y git make gcc cmake policycoreutils-python-utils autoconf gcc-c++ openssl openssl-devel curl firewalld vim readline-devel ruby ruby-devel argon2 postgresql-devel postgresql-contrib libsodium  
 ```
 Restart your system after these updates
 
 
 # Firewall Rules
 
-
+Use ssh only firewall as described [here](../misc/ssh_only_firewall.md) 
 
 # SSH Tunneling
 
