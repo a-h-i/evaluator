@@ -3,7 +3,10 @@ Evaluator
 This file documents the API server.
 
 ## Ruby Version
-`2.2.1`
+`2.6.1`
+
+# Deployment
+Please consult [this](../deployment/README.md) document for deployment
 
 ## Postgresql
 Postgresql version must be >= 10
@@ -32,3 +35,5 @@ For information on how to create the postgresql database please checkout [this](
 
 ## Running mailer background workers
 `bundle exec sidekiq -q mailers`
+
+

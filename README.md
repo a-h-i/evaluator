@@ -1,6 +1,6 @@
 Evaluator
 =========
-[![Code Climate](https://codeclimate.com/github/ah450/evaluator/badges/gpa.svg)](https://codeclimate.com/github/ah450/evaluator) [![Build Status](https://travis-ci.org/ah450/evaluator.svg?branch=master)](https://travis-ci.org/ah450/evaluator) [![Test Coverage](https://codeclimate.com/github/ah450/evaluator/badges/coverage.svg)](https://codeclimate.com/github/ah450/evaluator/coverage)[![Dependency Status](https://gemnasium.com/ah450/evaluator.svg)](https://gemnasium.com/ah450/evaluator)
+[![Code Climate](https://codeclimate.com/github/ah450/evaluator/badges/gpa.svg)](https://codeclimate.com/github/ah450/evaluator) [![Build Status](https://travis-ci.org/ah450/evaluator.svg?branch=master)](https://travis-ci.org/ah450/evaluator) [![Test Coverage](https://codeclimate.com/github/ah450/evaluator/badges/coverage.svg)](https://codeclimate.com/github/ah450/evaluator/coverage)[![Dependency Status](https://api.dependabot.com/badges/status?host=github&repo=a-h-i/evaluator)](https://api.dependabot.com/badges/status?host=github&repo=a-h-i/evaluator)
 
 
 Node version `11.6.0`
