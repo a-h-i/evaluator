@@ -46,9 +46,10 @@ public:
       : srcPath(srcPath), suites(suites), type(type), subtype(subtype){
 
                                                       };
-  Spec(const Spec &) = default;
-  Spec(Spec &&) = default;
-  Spec &operator=(Spec &&) = default;
+  Spec(const Spec &);
+  Spec(Spec &&) noexcept;
+  Spec &operator=(Spec &&);
+  Spec &operator=(const Spec &);
   Result const *run() noexcept(false);
 
   inline Result const *result() const { return &rslt; }
@@ -57,7 +58,7 @@ public:
 
 private:
   boost::filesystem::path srcPath;
-  const std::forward_list<TestSuite> &suites;
+  std::forward_list<TestSuite> suites;
   Result rslt;
   std::forward_list<boost::filesystem::path> createdDirectories;
   SpecType type;

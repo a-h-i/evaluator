@@ -10,7 +10,6 @@ set(LIBRARY_NAME "evSpecLib")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
     add_definitions(
-        -std=c++2a
         -Wall
         -Wextra
         -pedantic

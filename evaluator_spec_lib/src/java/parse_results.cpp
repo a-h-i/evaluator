@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <string>
 #include <iostream>
+#include <boost/regex.hpp>
+
 
 const char *TEST_SUITE_NODE_NAME = "testsuite";
 const char *TEST_CASE_NAME = "testcase";
@@ -39,7 +41,16 @@ static void processNode(evspec::Result &result, const fs::path &filepath,
   }
   result.results.emplace_front();
   evspec::SuiteResult &sr = result.results.front();
-  sr.packageName = filepath.string();
+  static const boost::regex packageNamePattern(R"REGEX(^TEST-([[:alnum:]]+)\..+$)REGEX");
+  boost::smatch packageNameSearch;
+  std::string stem = filepath.stem().string();
+  if(boost::regex_search(stem, packageNameSearch, packageNamePattern)) {
+    sr.packageName.reserve(packageNameSearch[1].length());
+    std::copy(packageNameSearch[1].first, packageNameSearch[1].second, std::back_inserter(sr.packageName));
+  } else {
+    sr.packageName = filepath.stem().string();
+  }
+  
   // iterate over children
   for (xmlNodePtr currentNode = node->children; currentNode;
        currentNode = currentNode->next) {

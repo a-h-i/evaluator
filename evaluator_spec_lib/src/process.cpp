@@ -170,9 +170,15 @@ static pid_t executeWithFork(std::vector<char *> &argv, std::vector<char *> &env
   }
 }
 
+struct PathRai {
+  PathRai(const fs::path &toRestore) : toRestore(toRestore) {}
+  ~PathRai() {fs::current_path(toRestore);}
+  const fs::path toRestore;
+};
+
 pid_t process::executeProcess(const process::ExecutionTarget &target) noexcept(
     false) {
-  fs::path prevWorkingDirectory = fs::current_path();
+  PathRai pathRai(fs::current_path()) ;
   fs::current_path(target.workingDirectory);
   const char *programPath = target.programPath.c_str();
   std::vector<char *> argv;
