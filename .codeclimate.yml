@@ -1,0 +1,12 @@
+version: "2"
+plugins:
+  bundler-audit:
+    enabled: true
+    config:
+      path: evaluator_api/Gemfile.lock
+  rubocop:
+    enabled: true
+  eslint:
+    enabled: true
+exclude_patterns:
+  - "**/polyfills/"
