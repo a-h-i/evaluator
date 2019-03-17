@@ -1,24 +1,27 @@
 cmake_minimum_required(VERSION 3.10)
 # Define version and project
-
 project(evspec VERSION 1.0 LANGUAGES CXX
 DESCRIPTION  "Evaluator Library for running projects."
 )
 add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
+include(GNUInstallDirs)
 
 # Target names
 set(EXECUTABLE_NAME "evSpecEx")
 set(TEST_EXEC_NAME "evSpecSpecs")
 set(LIBRARY_NAME ${PROJECT_NAME})
+set(PACKAGE_NAME "Evspec")
 
 # Target directores for installation and configurawtion files
-set(EVSPEC_LIB_DIR "lib/${LIBRARY_NAME}")
-set(EVSPEC_INCLUDE_DIR "include/${LIBRARY_NAME}")
-set(EVSPEC_PKGCONF_DIR "${EVSPEC_LIB_DIR}/pkgconfig")
-set(EVSPEC_CONFIG_DIR "/etc/${LIBRARY_NAME}")
+set(EVSPEC_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/${LIBRARY_NAME}")
+set(EVSPEC_EXPORT_DIR "${EVSPEC_LIB_DIR}/cmake")
+set(EVSPEC_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_NAME}")
+set(EVSPEC_PKGCONF_DIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+set(EVSPEC_CONFIG_DIR "${CMAKE_INSTALL_SYSCONFDIR}/${LIBRARY_NAME}")
 set(EVSPEC_PKGCONF_FILE "${LIBRARY_NAME}.pc")
-set(EVSPEC_LD_CONF_DIR "/etc/ld.so.conf.d")
+set(EVSPEC_LD_CONF_DIR "${CMAKE_INSTALL_SYSCONFDIR}/ld.so.conf.d")
 set(EVSPEC_LD_CONF_FILE_NAME "${LIBRARY_NAME}.conf")    
+
 
 
 # Custom configurations
@@ -82,7 +85,7 @@ include("src/CMakeLists.txt")
 set_target_properties(${LIBRARY_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION}
-    PUBLIC_HEADER src/include/evspec.h
+
     )
 
 
@@ -91,9 +94,22 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
 file(COPY fixtures DESTINATION .)
 file(COPY resources/surefire-test-report-3.0.xsd DESTINATION .)
 
+
+
 # Configuration files
 configure_file(evspeclib.pc.in ${EVSPEC_PKGCONF_FILE} @ONLY)
 configure_file(evspec.ld.conf ${EVSPEC_LD_CONF_FILE_NAME} @ONLY)
+
+
+# Set for install tree
+configure_file(EvspecConfig.cmake.in
+  "EvspecConfig.cmake" @ONLY)
+configure_file(EvspecConfigVersion.cmake.in
+    "EvspecConfigVersion.cmake" @ONLY)
+
+
+
+
 
 # Installation targets
 
@@ -102,7 +118,17 @@ install(TARGETS ${LIBRARY_NAME}
     PUBLIC_HEADER DESTINATION ${EVSPEC_INCLUDE_DIR}
     PERMISSIONS WORLD_READ
     CONFIGURATIONS Release
-    COMPONENT LIBRARY)
+    COMPONENT LIBRARY
+
+    )
+
+# Install cmake config files
+install(FILES 
+    ${CMAKE_BINARY_DIR}/EvspecConfig.cmake
+    ${CMAKE_BINARY_DIR}/EvspecConfigVersion.cmake
+    DESTINATION ${EVSPEC_EXPORT_DIR}
+)
+
 
 
 # Install pkgconfig
@@ -118,6 +144,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/resources/surefire-test-report-3.0.xsd
     PERMISSIONS WORLD_READ
     COMPONENT CONFIG
 )
+
 
 # Configure compiler
 
