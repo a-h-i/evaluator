@@ -42,7 +42,6 @@ target_include_directories(${TEST_EXEC_NAME}
 PRIVATE ${INCLUDES})
 target_include_directories(${LIBRARY_NAME}
 PRIVATE ${INCLUDES})
-include_directories()
 target_link_libraries(${EXECUTABLE_NAME} ${LIBS} )
 target_link_libraries(${TEST_EXEC_NAME}  ${LIBS})
 target_link_libraries(${LIBRARY_NAME} ${LIBS})

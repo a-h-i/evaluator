@@ -1,13 +1,27 @@
 cmake_minimum_required(VERSION 3.10)
-project(evSpecLib VERSION 0.1 LANGUAGES CXX)
+# Define version and project
 
+project(evspec VERSION 1.0 LANGUAGES CXX
+DESCRIPTION  "Evaluator Library for running projects."
+)
 add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
-add_compile_definitions(VERSION_MINOR=${PROJECT_VERSION_MINOR})
-set(CMAKE_BUILD_PARALLEL_LEVEL 4)
+
+# Target names
 set(EXECUTABLE_NAME "evSpecEx")
 set(TEST_EXEC_NAME "evSpecSpecs")
-set(LIBRARY_NAME "evSpecLib")
+set(LIBRARY_NAME ${PROJECT_NAME})
 
+# Target directores for installation and configurawtion files
+set(EVSPEC_LIB_DIR "lib/${LIBRARY_NAME}")
+set(EVSPEC_INCLUDE_DIR "include/${LIBRARY_NAME}")
+set(EVSPEC_PKGCONF_DIR "${EVSPEC_LIB_DIR}/pkgconfig")
+set(EVSPEC_CONFIG_DIR "/etc/${LIBRARY_NAME}")
+set(EVSPEC_PKGCONF_FILE "${LIBRARY_NAME}.pc")
+set(EVSPEC_LD_CONF_DIR "/etc/ld.so.conf.d")
+set(EVSPEC_LD_CONF_FILE_NAME "${LIBRARY_NAME}.conf")    
+
+
+# Custom configurations
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" )
     add_definitions(
         -Wall
@@ -24,16 +38,46 @@ elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
         )
     set(CMAKE_CXX_FLAGS_RELEASE "/Ox /Oi /arch:SSE2")
 endif()
+# Profile target
+
+SET( CMAKE_CXX_FLAGS_PROFILE "-pg" CACHE STRING
+    "Flags used by the C++ compiler during maintainer builds."
+    FORCE )
+SET( CMAKE_C_FLAGS_PROFILE "-pg" CACHE STRING
+    "Flags used by the C compiler during maintainer builds."
+    FORCE )
+SET( CMAKE_EXE_LINKER_FLAGS_PROFILE
+    "-pg" CACHE STRING
+    "Flags used for linking binaries during maintainer builds."
+    FORCE )
+SET( CMAKE_SHARED_LINKER_FLAGS_PROFILE
+    "-pg" CACHE STRING
+    "Flags used by the shared libraries linker during maintainer builds."
+    FORCE )
+# Disables debug assertion is stdlib
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    add_definitions(-DNDEBUG)
+endif()
+MARK_AS_ADVANCED(
+    CMAKE_CXX_FLAGS_PROFILE
+    CMAKE_C_FLAGS_PROFILE
+    CMAKE_EXE_LINKER_FLAGS_PROFILE
+    CMAKE_SHARED_LINKER_FLAGS_PROFILE )
 
 
+# Define targets
 
 add_executable(${EXECUTABLE_NAME} "")
 add_executable(${TEST_EXEC_NAME} "")
 add_library(${LIBRARY_NAME} SHARED "")
 
+# Custom CMAKE Modules if any
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 
+# Src files and depencies configured in seperate file
 include("src/CMakeLists.txt")
+
+# Shared library properties
 
 set_target_properties(${LIBRARY_NAME} PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -42,26 +86,40 @@ set_target_properties(${LIBRARY_NAME} PROPERTIES
     )
 
 
+# Note this is not done when installing
+
 file(COPY fixtures DESTINATION .)
 file(COPY resources/surefire-test-report-3.0.xsd DESTINATION .)
-configure_file(evspeclib.pc.in evspeclib.pc @ONLY)
 
+# Configuration files
+configure_file(evspeclib.pc.in ${EVSPEC_PKGCONF_FILE} @ONLY)
+configure_file(evspec.ld.conf ${EVSPEC_LD_CONF_FILE_NAME} @ONLY)
 
+# Installation targets
 
 install(TARGETS ${LIBRARY_NAME}
-    LIBRARY DESTINATION lib ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION include ${CMAKE_INSTALL_INCLUDEDIR}
+    LIBRARY DESTINATION ${EVSPEC_LIB_DIR}
+    PUBLIC_HEADER DESTINATION ${EVSPEC_INCLUDE_DIR}
     PERMISSIONS WORLD_READ
     CONFIGURATIONS Release
     COMPONENT LIBRARY)
-install(FILES ${CMAKE_BINARY_DIR}/evspeclib.pc
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+
+
+# Install pkgconfig
+install(FILES ${CMAKE_BINARY_DIR}/${EVSPEC_PKGCONF_FILE}
+    DESTINATION  ${EVSPEC_PKGCONF_DIR})
+# Install ldconf
+install(FILES ${CMAKE_BINARY_DIR}/${EVSPEC_LD_CONF_FILE_NAME}
+    DESTINATION ${EVSPEC_LD_CONF_DIR}
+)
 
 install(FILES ${CMAKE_SOURCE_DIR}/resources/surefire-test-report-3.0.xsd
-    DESTINATION etc/evspec/surefire-test-report-3.0.xsd
+    DESTINATION ${EVSPEC_CONFIG_DIR}
     PERMISSIONS WORLD_READ
     COMPONENT CONFIG
 )
+
+# Configure compiler
 
 target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_20)
 target_compile_features(${TEST_EXEC_NAME} PUBLIC cxx_std_20)
@@ -69,3 +127,14 @@ target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_20)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${TEST_EXEC_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${LIBRARY_NAME} PROPERTIES CXX_EXTENSIONS OFF)
+
+
+# Uninstall command
+add_custom_command(
+    COMMAND cat ${CMAKE_BINARY_DIR}/install_manifest.txt | xargs rm  > uninstall_manifest.txt
+    OUTPUT uninstall_manifest.txt
+)
+
+add_custom_target(uninstall 
+DEPENDS uninstall_manifest.txt
+)
