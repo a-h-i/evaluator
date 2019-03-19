@@ -13,7 +13,7 @@ dnf install -y atool unzip lzma lzop lzip unrar lha p7zip
 ```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=RELEASE ../ 
+cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr ../ 
 make
 ```
 Cmake build types `RELEASE`, `DEBUG` and `PROFILE` the default is `DEBUG`. Please only install the `RELEASE` version.

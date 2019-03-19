@@ -1,4 +1,4 @@
-#include "java.h"
+#include "internal/java.h"
 #include <algorithm>
 #include <cstdlib>
 #include <exception>

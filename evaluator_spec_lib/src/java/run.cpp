@@ -1,7 +1,6 @@
 #include "evspec.h"
-#include "java.h"
+#include "internal/java.h"
 #include "process.h"
-
 #include <exception>
 #include <forward_list>
 #include <iterator>
@@ -17,8 +16,9 @@ evspec::Result evspec::java::run(const fs::path &srcPath,
                                  const fs::path &homePath,
                                  const fs::path &tempPath,
                                  const std::forward_list<TestSuite> &suites,
-                                 SpecType specType,
-                                 SpecSubtype subType) noexcept(false) {
+                                 SpecType specType, SpecSubtype subType,
+                                 [[maybe_unused]] VirtualizationContext
+                                     *virtualizationCtxPtr) noexcept(false) {
   try {
     std::forward_list<pid_t> pidList;
     // Write pom.xml
@@ -49,7 +49,9 @@ evspec::Result evspec::java::run(const fs::path &srcPath,
     Result result = compile(homePath);
 
     // Run tests
-    runTests(result, homePath);
+    if (result.compiled()) {
+      runTests(result, homePath);
+    }
 
     // Parse results
     return result;
@@ -69,7 +71,5 @@ static void runTests(evspec::Result &result, const fs::path &workingDirectory) {
   process::waitPid(pid, true, []([[maybe_unused]] pid_t pid) {
 
   });
-  if (result.compiled()) {
-    evspec::java::parseTestResults(result, workingDirectory);
-  }
+  evspec::java::parseTestResults(result, workingDirectory);
 }

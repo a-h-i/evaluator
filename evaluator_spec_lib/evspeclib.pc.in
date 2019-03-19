@@ -9,4 +9,4 @@ Version: @PROJECT_VERSION@
 
 Requires:
 Libs: -L${libdir} -l@LIBRARY_NAME@
-Cflags: -I${includedir}
+Cflags: -I${includedir} -DEVSPEC_DLL

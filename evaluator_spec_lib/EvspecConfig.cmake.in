@@ -1,4 +1,4 @@
-# - Config file for the FooBar package
+# - Config file for the Evspec package
 # It defines the following variables
 #  EVSPEC_INCLUDE_DIRS - include directories for Evspec
 #  EVSPEC_LIBRARIES    - libraries to link against
@@ -10,3 +10,4 @@ set(EVSPEC_INCLUDE_DIRS @CMAKE_INSTALL_PREFIX@/@EVSPEC_INCLUDE_DIR@)
 
 
 set(EVSPEC_LIBRARIES @CMAKE_INSTALL_PREFIX@/@EVSPEC_LIB_DIR@/libevspec.so)
+add_definitions(EVSPEC_DLL)

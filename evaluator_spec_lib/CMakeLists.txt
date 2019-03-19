@@ -30,10 +30,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STR
         -Wall
         -Wextra
         -pedantic
+        -Werror
         )
     # Yes discard default values
-    set(CMAKE_CXX_FLAGS_RELEASE "-flto -O3 -march=native -fmerge-all-constants -fgcse-sm -fgcse-las")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto -s")
+    set(CMAKE_CXX_FLAGS_RELEASE "-fvisibility=hidden -fvisibility-inlines-hidden -flto=jobserver -O3 -march=native -fmerge-all-constants -fgcse-sm -fgcse-las -fPIC -faggressive-loop-optimizations -fdelete-null-pointer-checks -fira-hoist-pressure -fira-loop-pressure -fsched-pressure -funsafe-math-optimizations")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto=jobserver -s -funsafe-math-optimizations" )
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto=jobserver -shared -fPIC -funsafe-math-optimizations -fvisibility=hidden -fvisibility-inlines-hidden")
 elseif ( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
     add_definitions(
         /Wall
@@ -73,7 +75,8 @@ MARK_AS_ADVANCED(
 add_executable(${EXECUTABLE_NAME} "")
 add_executable(${TEST_EXEC_NAME} "")
 add_library(${LIBRARY_NAME} SHARED "")
-
+target_compile_definitions(${LIBRARY_NAME} PUBLIC EVSPEC_DLL)
+target_compile_definitions(${LIBRARY_NAME} PRIVATE EVSPEC_DLL_EXPORTS)
 # Custom CMAKE Modules if any
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 

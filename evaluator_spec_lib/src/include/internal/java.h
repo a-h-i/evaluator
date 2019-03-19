@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace fs = boost::filesystem;
+
 namespace evspec::java {
 void createSrcExtractionJob(const fs::path &archiveExtractPath,
                             const fs::path &srcPath,
@@ -21,7 +22,7 @@ void mvEclipseSrcDirectory(const fs::path &workingDirectory,
 evspec::Result compile(const fs::path &workingDirectory);
 Result run(const fs::path &srcPath, const fs::path &homePath,
            const fs::path &tempPath, const std::forward_list<TestSuite> &suites,
-           SpecType specType, SpecSubtype subType) noexcept(false);
+           SpecType specType, SpecSubtype subType, VirtualizationContext*) noexcept(false);
 void createSuiteExtractionJobs(const fs::path &extractionTarget,
                                const std::forward_list<evspec::TestSuite> &,
                                std::forward_list<pid_t> &,

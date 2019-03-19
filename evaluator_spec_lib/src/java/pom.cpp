@@ -1,4 +1,4 @@
-#include "java.h"
+#include "internal/java.h"
 #include <boost/regex.hpp>
 #include <iterator>
 #include <string>
