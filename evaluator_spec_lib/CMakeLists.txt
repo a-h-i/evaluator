@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 # Define version and project
-project(evspec VERSION 1.0 LANGUAGES CXX
+project(evspec VERSION 1.1 LANGUAGES CXX
 DESCRIPTION  "Evaluator Library for running projects."
 )
 add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
@@ -119,7 +119,7 @@ configure_file(EvspecConfigVersion.cmake.in
 install(TARGETS ${LIBRARY_NAME}
     LIBRARY DESTINATION ${EVSPEC_LIB_DIR}
     PUBLIC_HEADER DESTINATION ${EVSPEC_INCLUDE_DIR}
-    PERMISSIONS WORLD_READ
+    PERMISSIONS WORLD_READ WORLD_EXECUTE
     CONFIGURATIONS Release
     COMPONENT LIBRARY
 
