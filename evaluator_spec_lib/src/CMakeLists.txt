@@ -8,6 +8,7 @@ list(APPEND SRCS src/java/parse_results.cpp)
 list(APPEND SRCS src/java/pom.cpp)
 list(APPEND SRCS src/exit_handler.cpp)
 list(APPEND SRCS src/evaluate_submission.cpp)
+list(APPEND SRCS src/lib_xml_raii.cpp)
 list(APPEND SRCS resources/surefire-test-report-3.0.xsd)
 
 target_sources(${EXECUTABLE_NAME}
@@ -26,8 +27,9 @@ target_sources(${LIBRARY_NAME}
 )
 
 list(APPEND HEADERS src/include/evspec.h)
-list(APPEND HEADERS src/include/ev_spec_types.h)
 list(APPEND HEADERS src/include/dll_imports.h)
+list(APPEND HEADERS src/include/ev_spec_types.h)
+list(APPEND HEADERS src/include/process.h)
 
 set_property(TARGET ${LIBRARY_NAME} PROPERTY
 PUBLIC_HEADER ${HEADERS}

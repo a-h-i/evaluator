@@ -9,11 +9,6 @@
 
 namespace fs = boost::filesystem;
 
-struct libXmlInitContext {
-  libXmlInitContext() { xmlInitParser(); }
-  ~libXmlInitContext() { xmlCleanupParser(); }
-};
-
 struct JavaTestContext {
   evspec::EvaluationContext ctx;
   JavaTestContext() {
@@ -25,8 +20,10 @@ struct JavaTestContext {
     BOOST_TEST_MESSAGE("JavaTestContext created");
   }
 };
-
-BOOST_TEST_GLOBAL_FIXTURE(libXmlInitContext);
+struct GlobalFixture {
+  evspec::LibXmlRaii raii;
+};
+BOOST_TEST_GLOBAL_FIXTURE(GlobalFixture);
 
 BOOST_FIXTURE_TEST_SUITE(java_tests, JavaTestContext)
 

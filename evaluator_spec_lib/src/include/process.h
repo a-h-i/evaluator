@@ -1,4 +1,5 @@
 #pragma once
+#include "dll_imports.h"
 #include <boost/filesystem/path.hpp>
 #include <errno.h>
 #include <iterator>
@@ -10,9 +11,9 @@
 
 template <typename T1, typename T2> struct can_copy {};
 
-namespace process {
+namespace evspec::process {
 
-enum class redirect_target_t : int {
+enum class EVSPEC_API redirect_target_t : int {
   StdinRedirect = 0,
   StdoutRedirect,
   StderrRedirect
@@ -29,7 +30,7 @@ typedef std::tuple<int, int, redirect_target_t> redirect_t;
  * @brief argv should not contain program path
  *
  */
-struct ExecutionTarget {
+struct EVSPEC_API ExecutionTarget {
   boost::filesystem::path programPath, workingDirectory;
   std::vector<std::string> argv;
   std::vector<std::string> env;
@@ -43,7 +44,7 @@ struct ExecutionTarget {
  * @throws std::runtime exception if failed to create process
  * @return pid_t pid of process
  */
-pid_t executeProcess(const ExecutionTarget &) noexcept(false);
+pid_t EVSPEC_API executeProcess(const ExecutionTarget &) noexcept(false);
 
 template <typename FailFunc>
 bool waitPid(pid_t pid, bool block, FailFunc fail) {
@@ -62,8 +63,8 @@ bool waitPid(pid_t pid, bool block, FailFunc fail) {
     throw std::runtime_error(what);
   } else if (result == pid) {
     // child exited
-    bool success = WIFEXITED(status) != 0 && WEXITSTATUS(status) == 0 &&
-                   result == pid;
+    bool success =
+        WIFEXITED(status) != 0 && WEXITSTATUS(status) == 0 && result == pid;
     if (!success) {
       fail(pid);
     }
@@ -74,7 +75,6 @@ bool waitPid(pid_t pid, bool block, FailFunc fail) {
   }
 }
 
-
 template <typename ForwardIterator, typename FailFunc>
 ForwardIterator waitPids(ForwardIterator begin, ForwardIterator end, bool block,
                          FailFunc fail) {
@@ -84,7 +84,7 @@ ForwardIterator waitPids(ForwardIterator begin, ForwardIterator end, bool block,
       std::is_convertible<FICategory, std::forward_iterator_tag>::value,
       "Forward Iterator type traits");
   while (begin != end) {
-    if(!waitPid(*begin, block, fail)) {
+    if (!waitPid(*begin, block, fail)) {
       break;
     }
     begin++;
@@ -92,4 +92,4 @@ ForwardIterator waitPids(ForwardIterator begin, ForwardIterator end, bool block,
   return begin;
 }
 
-} // namespace process
+} // namespace EVSPEC_APIevspec::process

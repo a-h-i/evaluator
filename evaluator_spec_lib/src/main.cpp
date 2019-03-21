@@ -13,8 +13,8 @@ void print_exception(const std::exception &e) {
   try {
     std::cerr << "exception: " << e.what() << '\n';
     std::rethrow_if_nested(e);
-  } catch (const std::exception &e) {
-    print_exception(e);
+  } catch (const std::exception &ee) {
+    print_exception(ee);
   }
 }
 
@@ -23,7 +23,7 @@ using namespace boost::filesystem;
 int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[]) {
   std::atexit(evspec::exitHandler);
   std::signal(SIGABRT, evspec::abortHandler);
-  xmlInitParser();
+  evspec::LibXmlRaii libXmlRaii;
   try {
     path srcPath = canonical("fixtures/M2_Code.zip");
     std::forward_list<evspec::TestSuite> suites;
@@ -58,5 +58,4 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char const *argv[]) {
     print_exception(e);
     return EXIT_FAILURE;
   }
-  xmlCleanupParser();
 }

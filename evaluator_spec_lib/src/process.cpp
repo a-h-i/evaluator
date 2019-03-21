@@ -7,27 +7,12 @@
 #include <unistd.h>
 #include <utility>
 #include <fcntl.h>
-
+using namespace evspec;
 namespace fs = boost::filesystem;
 [[noreturn]] static void handleForkError(int error) {
   std::string what("Error while forking at process::executeProcess: ");
-  switch (error) {
-  case EAGAIN:
-    // hit system limit
-    what += "System limit reached";
-    break;
-  case ENOMEM:
-    // No memory
-    what += "Out of memory";
-    break;
-  case ENOSYS:
-    // hardware does not support fork
-    what += "System does not support fork/vfork";
-    break;
-  default:
-    // unknown error
-    what += "errorno = " + std::to_string(error);
-  }
+  char * errorstr = strerror(error);
+  std::copy_n(errorstr, strlen(errorstr), std::back_inserter(what));
   throw std::runtime_error(what);
 }
 static pid_t executeWithVfork(std::vector<char *> &argv, std::vector<char *> &env,
@@ -57,71 +42,15 @@ static pid_t executeWithVfork(std::vector<char *> &argv, std::vector<char *> &en
 
 [[noreturn]] static void handleExecveError(int err) {
   std::string what = "execve error process::executeProcess : ";
-  switch (err)
-  {
-    case E2BIG:
-      what += R"WHAT(
-        The total number of bytes in the environment (envp) and
-              argument list (argv) is too large.
-      )WHAT";
-      break;
-    case EACCES:
-      what += R"WHAT(
-        Search permission is denied on a component of the path prefix
-              of filename or the name of a script interpreter. 
-        Or
-        Execute permission is denied for the file or a script or ELF
-              interpreter.
-      )WHAT";
-      break;
-    case EFAULT:
-      what += R"WHAT(
-        filename or one of the pointers in the vectors argv or envp
-              points outside your accessible address space.
-
-      )WHAT";
-      break;
-    case EMFILE:
-      what += R"WHAT(
-    The per-process limit or system-wide limit on the number of open file descriptors
-              has been reached.
-      )WHAT";
-      break;
-    case ENOMEM:
-      what += R"WHAT(
-        Insufficient kernel memory was available.
-      )WHAT";
-      break;
-    case ETXTBSY:
-      what += R"WHAT(
-        The specified executable was open for writing by one or more
-              processes.
-      )WHAT";
-      break;
-    default:
-      what += "errorno = " + std::to_string(err);
-  }
+  char *errorstr = strerror(err);
+  std::copy_n(errorstr, strlen(errorstr), std::back_inserter(what));
   throw std::runtime_error(what);
 }
 
 [[noreturn]] static void handleDupError(int err) {
   std::string what = "dup error process::executeProcess : ";
-  switch(err) {
-    case EBADF:
-      what += "oldfd is not a valid file descriptor or newfd is out of the allowed range";
-      break;
-    case EBUSY:
-      what += "EBUSY, race condition in open probable cause";
-      break;
-    case EINTR:
-      what += "dup was interrupted";
-      break;
-    case EMFILE:
-      what += "The per-process limit on the number of open file descriptors has been reached";
-      break;
-    default:
-      what += "errorno = " + std::to_string(err);
-  }
+  char *errorstr = strerror(err);
+  std::copy_n(errorstr, strlen(errorstr), std::back_inserter(what));
   throw std::runtime_error(what);
 }
 
@@ -135,7 +64,7 @@ inline int dupLoop(int oldfd, int newfd) {
 
 static pid_t executeWithFork(std::vector<char *> &argv, std::vector<char *> &env,
                       const char *programPath,
-                      const std::vector<process::redirect_t> &pipes) {
+                      const std::vector<evspec::process::redirect_t> &pipes) {
   pid_t pid = fork();
   if (pid == 0) {
     // child
@@ -176,7 +105,7 @@ struct PathRai {
   const fs::path toRestore;
 };
 
-pid_t process::executeProcess(const process::ExecutionTarget &target) noexcept(
+pid_t evspec::process::executeProcess(const process::ExecutionTarget &target) noexcept(
     false) {
   PathRai pathRai(fs::current_path()) ;
   fs::current_path(target.workingDirectory);

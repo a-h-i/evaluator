@@ -61,14 +61,14 @@ evspec::Result evspec::java::run(const fs::path &srcPath,
 }
 
 static void runTests(evspec::Result &result, const fs::path &workingDirectory) {
-  process::ExecutionTarget target = {
+  evspec::process::ExecutionTarget target = {
       .programPath = "/bin/env",
       .workingDirectory = workingDirectory,
       .argv = {std::string("mvn"), std::string("test")},
       .env = {}};
   // TODO: Use virtualization library
-  pid_t pid = process::executeProcess(target);
-  process::waitPid(pid, true, []([[maybe_unused]] pid_t pid) {
+  pid_t pid = evspec::process::executeProcess(target);
+  evspec::process::waitPid(pid, true, []([[maybe_unused]] pid_t pid) {
 
   });
   evspec::java::parseTestResults(result, workingDirectory);
