@@ -18,11 +18,8 @@
 // ──────────
 //
 
-#include "evspec/process.h"
-#include "globals.h"
-#include "options.h"
-#include "signal_handlers.h"
-#include "utils.h"
+#include <sys/types.h>
+#include <uuid/uuid.h>
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -30,9 +27,12 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
-#include <sys/types.h>
-#include <uuid/uuid.h>
 #include <vector>
+#include "evspec/process.h"
+#include "globals.h"
+#include "options.h"
+#include "signal_handlers.h"
+#include "utils.h"
 
 /**
  * @brief Process that manages subprocesses.
@@ -48,9 +48,13 @@ void launch_workers(const char *uuid_cstr,
   evspec::process::ExecutionTarget et{
       .programPath{worker_exe_path.string()},
       .workingDirectory{std::filesystem::current_path().string()},
-      .argv{{uuid_cstr},
+      .argv{
             {options::CONFIG_PATH_SWITCH},
-            {vm[options::CONFIG_PATH].as<std::string>()}},
+            {vm[options::CONFIG_PATH].as<std::string>()},
+            {options::PARENT_UUID},
+            {uuid_cstr}
+
+      },
       .env{}};
 
   std::generate_n(inserter, NUM_WORKERS,
@@ -58,13 +62,20 @@ void launch_workers(const char *uuid_cstr,
 }
 
 int main(int argc, char const **argv) try {
-  options::variables_map vm = options::parse_options(argc, argv);
+  //
+  // ─── PARSE OPTIONS
+  // ──────────────────────────────────────────────────────────────
+  //
+  options::variables_map vm = options::parse_options(true, argc, argv);
   const std::filesystem::path worker_exe_path =
       vm[options::WORKER_EXE_PATH].as<options::worker_exe_path_t>();
   const std::size_t NUM_WORKERS =
       vm[options::NUM_WORKERS].as<options::num_workers_t>();
   evworker::children.reserve(NUM_WORKERS);
-  // generate uuid
+  //
+  // ─── GENERATE UID
+  // ───────────────────────────────────────────────────────────────
+  //
   uuid_t daemon_uuid;
   uuid_generate(daemon_uuid);
   char uuid_cstr[UUID_STR_LEN]{0};
@@ -101,13 +112,15 @@ int main(int argc, char const **argv) try {
                    std::memory_order_acquire)) {
       utility::kill_pids(children.begin(), children.end(), SIGTERM);
       evworker::utility::wait_all_children();
-      execv(argv[0], const_cast<char * const *>(argv));
-      // 
-      const char * errstr = strerror(errno);
-      throw std::runtime_error(std::string("Failed to reaload daemon - ") + errstr);
+      execv(argv[0], const_cast<char *const *>(argv));
+      //
+      const char *errstr = strerror(errno);
+      throw std::runtime_error(std::string("Failed to reaload daemon - ") +
+                               errstr);
     } else {
-      throw std::runtime_error("sigsuspend returned and neither in graceful "
-                               "shutdown state or reload state.");
+      throw std::runtime_error(
+          "sigsuspend returned and neither in graceful "
+          "shutdown state or reload state.");
     }
   }
 

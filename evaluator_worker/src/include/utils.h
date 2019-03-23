@@ -9,11 +9,12 @@
 #include <csignal>
 
 namespace evworker::utility {
-void print_exception(const std::exception &);
+void print_exception(const std::exception &, int level = 0);
 constexpr std::size_t STACKTRACE_SIZE = 32;
 /**
  * @brief Writes current backtrace up to STACKTRACE_SIZE frames.
  * This is function is AS-Unsafe but MT-Safe.
+ * @params fd
  */
 void write_backtrace(int);
 extern char const *DAEMON_PID_FNAME;
@@ -61,5 +62,7 @@ void kill_pids(Itr begin, Itr end, int sig) {
 
 std::filesystem::path generate_pid_file_name(const std::filesystem::path &pid_dir,
                                            bool daemon);
+
+
 
 } // namespace evworker::utility

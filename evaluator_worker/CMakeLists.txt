@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 3.10)
 project(evworker VERSION 1.0 LANGUAGES CXX
 DESCRIPTION  "Evaluator Worker for evaluating submission."
 )
-add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
+add_compile_definitions(VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
+VERSION_MINOR="${PROJECT_VERSION_MINOR}"
+)
 include(GNUInstallDirs)
 # Target names
 set(WORKER_NAME "evworker")

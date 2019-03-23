@@ -9,6 +9,7 @@ dnf install -y boost boost-devel git make gcc cmake autoconf gcc-c++ openssl cur
 Requires [evspeclib](../evaluator_spec_lib/README.md)
 
 
+
 # Building
 ```bash
 mkdir build
@@ -17,6 +18,8 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr ../
 make
 ```
 Cmake build types `RELEASE`, `DEBUG` and `PROFILE` the default is `DEBUG`. Please only install the `RELEASE` version.
+
+
 
 # Installing
 after building `cd` into the build directory and run `make install` you may need to be super user/root.

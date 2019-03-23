@@ -8,21 +8,25 @@ list(APPEND SRCS src/utility/pid_helpers.cpp)
 list(APPEND SRCS src/options/parse_options.cpp)
 list(APPEND SRCS src/options/options_config.cpp)
 list(APPEND SRCS src/signals/atomic_globals.cpp)
-
+list(APPEND SRCS fixtures/sample_config.ini)
 # ────────────────── Worker Sources ──────────────────
 
 
 list(APPEND WORKER_SOURCES src/worker/worker.cpp)
 list(APPEND WORKER_SOURCES src/worker_main.cpp)
+list(APPEND WORKER_SOURCES src/worker/redis.cpp)
+list(APPEND WORKER_SOURCES src/worker/worker_ctx_raii.cpp)
+list(APPEND WORKER_SOURCES src/worker/worker_ctx_redis.cpp)
+list(APPEND WORKER_SOURCES src/worker/pg.cpp)
 
 # ────────────────── Daemon Sources ──────────────────
 
 list(APPEND DAEMON_SOURCES src/daemon_main.cpp)
 
 # ────────────────── Spec Sources
-list(APPEND SPEC_SRCS src/test/worker_specs.cpp)
+list(APPEND SPEC_SRCS src/test/options_spec.cpp)
 
-
+file(COPY fixtures DESTINATION .)
 # ────────────────── Add sources to targets ────────────────── 
 
 target_sources(${WORKER_NAME}
@@ -60,6 +64,7 @@ find_package(Evspec REQUIRED CONFIG)
 find_package(PostgreSQL REQUIRED)
 find_package(Hiredis REQUIRED)
 find_package(Uuid REQUIRED)
+
 # ────────────────── Linked Libraries
 list(APPEND LIBS ${Boost_REGEX_LIBRARY} ${LIBXML2_LIBRARIES} ${EVSPEC_LIBRARIES} Threads::Threads)
 list(APPEND LIBS ${PostgreSQL_LIBRARIES})

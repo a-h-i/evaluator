@@ -46,13 +46,24 @@ extern "C" void sig_segv_handler(int signal, siginfo_t *, void *) {
   std::raise(signal);
 }
 
+static void at_exit_handler() {
+  if (evworker::signals::is_daemon.load(std::memory_order_acquire)) {
+    // Send to all processes with same process group as self.
+    evworker::utility::kill_pids(evworker::children.begin(),
+                                 evworker::children.end(), SIGTERM);
+  }
+  std::atomic_signal_fence(std::memory_order_acquire);
+  evworker::utility::wait_all_children();
+}
+
 static void install_signal_handler(bool daemon) {
   std::set_terminate(terminate_handler);
+  std::atexit(at_exit_handler);
   struct sigaction sa_segv;
   sa_segv.sa_sigaction = sig_abrt_handler;
   sigfillset(&sa_segv.sa_mask);
   sa_segv.sa_flags = SA_SIGINFO;
-  sigaction(SIGABRT, &sa_segv, nullptr);
+  sigaction(SIGSEGV, &sa_segv, nullptr);
   struct sigaction sa_abrt;
   sa_abrt.sa_sigaction = sig_abrt_handler;
   sigfillset(&sa_abrt.sa_mask);
