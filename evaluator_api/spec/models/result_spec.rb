@@ -6,6 +6,8 @@
 #  submission_id :bigint(8)        not null
 #  project_id    :bigint(8)        not null
 #  test_suite_id :bigint(8)        not null
+#  submitter_id  :bigint(8)        not null
+#  team          :text
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  max_grade     :integer          not null
@@ -13,10 +15,6 @@
 #  success       :boolean          not null
 #  hidden        :boolean          not null
 #  detail        :jsonb            not null
-#
-# Indexes
-#
-#  index_results_on_submission_id  (submission_id)
 #
 
 require "rails_helper"

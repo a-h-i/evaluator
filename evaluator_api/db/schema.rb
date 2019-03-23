@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_03_050334) do
+ActiveRecord::Schema.define(version: 2019_03_23_040526) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -45,6 +45,8 @@ ActiveRecord::Schema.define(version: 2019_03_03_050334) do
     t.bigserial "submission_id", null: false
     t.bigserial "project_id", null: false
     t.bigserial "test_suite_id", null: false
+    t.bigserial "submitter_id", null: false
+    t.text "team"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "max_grade", null: false
@@ -52,7 +54,6 @@ ActiveRecord::Schema.define(version: 2019_03_03_050334) do
     t.boolean "success", null: false
     t.boolean "hidden", null: false
     t.jsonb "detail", null: false
-    t.index ["submission_id"], name: "index_results_on_submission_id"
   end
 
   create_table "student_course_registrations", force: :cascade do |t|
@@ -80,12 +81,10 @@ ActiveRecord::Schema.define(version: 2019_03_03_050334) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "timeout", default: 60, null: false
-    t.integer "max_grade", default: 0, null: false
     t.text "name", null: false
-    t.jsonb "test_cases"
     t.jsonb "detail", null: false
     t.boolean "hidden", default: true, null: false
-    t.boolean "ready", default: false, null: false
+    t.text "file_name", null: false
     t.index ["project_id", "name"], name: "test_suites_project_id_name_key", unique: true
   end
 
@@ -111,6 +110,7 @@ ActiveRecord::Schema.define(version: 2019_03_03_050334) do
   add_foreign_key "results", "projects", name: "results_project_id_fkey", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "results_submission_id_fkey", on_delete: :cascade
   add_foreign_key "results", "test_suites", name: "results_test_suite_id_fkey", on_delete: :cascade
+  add_foreign_key "results", "users", column: "submitter_id", name: "results_submitter_id_fkey", on_delete: :cascade
   add_foreign_key "student_course_registrations", "courses", name: "student_course_registrations_course_id_fkey", on_delete: :cascade
   add_foreign_key "student_course_registrations", "users", column: "student_id", name: "student_course_registrations_student_id_fkey", on_delete: :cascade
   add_foreign_key "submissions", "courses", name: "submissions_course_id_fkey"

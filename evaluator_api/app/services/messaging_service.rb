@@ -12,5 +12,6 @@ class MessagingService
   def self.queue_submission_eval_job(submission)
   end
   def self.queue_submission_cul_job(user, project)
+    SubmissionsCullingJob.perform_later(user.id, project.id)
   end
 end
