@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 # Define version and project
-project(evspec VERSION 1.1 LANGUAGES CXX
+project(evspec VERSION 2.0 LANGUAGES CXX
 DESCRIPTION  "Evaluator Library for running projects."
 )
 add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
+add_compile_definitions(VERSION_MINOR=${PROJECT_VERSION_MINOR})
 include(GNUInstallDirs)
 
 # Target names

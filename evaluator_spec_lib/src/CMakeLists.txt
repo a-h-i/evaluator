@@ -48,11 +48,11 @@ find_package(Boost COMPONENTS system filesystem unit_test_framework regex iostre
 find_package(LibXml2 REQUIRED)
 list(APPEND LIBS ${Boost_SYSTEM_LIBRARY} ${Boost_FILESYSTEM_LIBRARY} ${Boost_REGEX_LIBRARY} ${LIBXML2_LIBRARIES} ${Boost_IOSTREAMS_LIBRARY} Threads::Threads)
 list(APPEND INCLUDES ${Boost_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIR} "src/include")
+list(APPEND LIBS ${Boost_ASIO_LIBRARY})
 target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDES})
 target_include_directories(${TEST_EXEC_NAME} PRIVATE ${INCLUDES})
 target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDES})
 target_link_libraries(${EXECUTABLE_NAME} ${LIBS} )
 target_link_libraries(${TEST_EXEC_NAME}  ${LIBS})
 target_link_libraries(${LIBRARY_NAME} ${LIBS})
-
 

@@ -1,16 +1,16 @@
+#include <boost/filesystem.hpp>
+#include <exception>
+#include <forward_list>
 #include "evspec.h"
 #include "internal/java.h"
 #include "internal/utils.h"
 #include "raii/scope_rai.h"
-#include <boost/filesystem.hpp>
-#include <exception>
-#include <forward_list>
 
 namespace fs = boost::filesystem;
 
-evspec::Result
-evspec::evaluateSubmission(const EvaluationContext *evaluationCtxPtr,
-                           VirtualizationContext *virtualizationCtxPtr) {
+evspec::Result evspec::evaluateSubmission(
+    const EvaluationContext *evaluationCtxPtr,
+    VirtualizationContext *virtualizationCtxPtr) {
   std::forward_list<fs::path> createdDirectories;
   auto dirDeleter = [&createdDirectories] {
     utility::removeDirectories<decltype(createdDirectories)>(createdDirectories,
@@ -30,6 +30,8 @@ evspec::evaluateSubmission(const EvaluationContext *evaluationCtxPtr,
     return java::run(evaluationCtxPtr->srcPath, *homePathItr, *tempPathItr,
                      evaluationCtxPtr->suites, evaluationCtxPtr->specType,
                      evaluationCtxPtr->subtype, virtualizationCtxPtr);
+  } else if (evaluationCtxPtr->specType.isNullType()) {
+    return Result();
   } else {
     throw std::runtime_error("evspec::evaluateSubmission : Unknown spec type");
   }

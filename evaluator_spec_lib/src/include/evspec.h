@@ -25,4 +25,6 @@ struct LibXmlRaii {
  */
 extern void (*const exitHandler)();
 extern void (*const abortHandler)(int);
+constexpr uint8_t version_major = VERSION_MAJOR;
+constexpr uint8_t version_minor = VERSION_MINOR;
 } // namespace EVSPEC_APIevspec
