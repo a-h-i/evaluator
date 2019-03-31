@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_31_193418) do
+ActiveRecord::Schema.define(version: 2019_03_31_195801) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_193418) do
     t.json "detail", null: false
     t.index ["course_id", "name"], name: "projects_course_id_name_key", unique: true
     t.index ["course_id"], name: "index_projects_on_course_id"
-    t.index ["created_at", "published"], name: "index_projects_on_created_at_and_published", order: { created_at: :desc }
+    t.index ["published", "created_at"], name: "index_projects_on_published_and_created_at", order: { created_at: :desc }
   end
 
   create_table "results", force: :cascade do |t|
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_193418) do
     t.boolean "hidden", default: true, null: false
     t.text "file_name", null: false
     t.text "mime_type", null: false
+    t.index ["project_id", "hidden", "created_at"], name: "index_test_suites_on_project_id_and_hidden_and_created_at", order: { created_at: :desc }
     t.index ["project_id", "name"], name: "test_suites_project_id_name_key", unique: true
   end
 
