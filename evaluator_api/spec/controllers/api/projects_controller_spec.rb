@@ -17,17 +17,17 @@ RSpec.describe Api::ProjectsController, type: :controller do
     it 'allows a student to index' do
       set_token student.token
       get :index, format: :json, params: {course_id: published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'allows a teacher to index' do
       set_token teacher.token
       get :index, format: :json, params: {course_id: published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'allows an admin to index' do
       set_token admin.token
       get :index, format: :json, params: {course_id: published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'have pagination' do
       set_token teacher.token
@@ -54,14 +54,14 @@ RSpec.describe Api::ProjectsController, type: :controller do
       set_token teacher.token
       get :index, format: :json, params: {course_id: unpublished_course.id}
       expect(json_response).to include(:projects)
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'allows an admin to index projects of a published course' do
       projects = FactoryBot.create(:project, course: unpublished_course)
       set_token admin.token
       get :index, format: :json, params: {course_id: unpublished_course.id}
       expect(json_response).to include(:projects)
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     context 'query' do
       context 'due' do
@@ -157,13 +157,13 @@ RSpec.describe Api::ProjectsController, type: :controller do
     it 'allow a teacher to view a published project of an unpublished course' do
       set_token teacher.token
       get :show, format: :json, params: {id: published_project_unpublished_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql published_project_unpublished_course.id
     end
     it 'allow a teacher to view an unpublished project of an unpublished course' do
       set_token teacher.token
       get :show, format: :json, params: {id: unpublished_project_unpublished_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql unpublished_project_unpublished_course.id
     end
 
@@ -171,21 +171,21 @@ RSpec.describe Api::ProjectsController, type: :controller do
       set_token student.token
       published_project_published_course.course.register(student)
       get :show, format: :json, params: {id: published_project_published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql published_project_published_course.id
     end
 
     it 'allow teacher to view a published project of a published course' do
       set_token teacher.token
       get :show, format: :json, params: {id: published_project_published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql published_project_published_course.id
     end
 
     it 'allow a teacher to view an unpublished project of a published course' do
       set_token teacher.token
       get :show, format: :json, params: {id: unpublished_project_published_course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql unpublished_project_published_course.id
     end
   end
@@ -212,7 +212,7 @@ RSpec.describe Api::ProjectsController, type: :controller do
       expect(response).to be_forbidden
     end
 
-    it 'allowss an admin' do
+    it 'allows an admin' do
       expect do
         set_token admin.token
         post :create, format: :json, params: params.merge({course_id: published_course.id})
@@ -258,7 +258,7 @@ RSpec.describe Api::ProjectsController, type: :controller do
       set_token admin.token
       original = project.as_json
       put :update, format: :json, params: {id: project.id, quiz: true}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       project.reload
       expect(original).to_not eql project.as_json
     end
@@ -300,7 +300,7 @@ RSpec.describe Api::ProjectsController, type: :controller do
         set_token admin.token
         delete :destroy, format: :json,  params: {id: project.id}
       end.to change(Project, :count).by(-1)
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(Project.exists?(project.id)).to be false
     end
   end

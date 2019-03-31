@@ -1,5 +1,5 @@
 class Api::CoursesController < ApplicationController
-  prepend_before_action :authorize_teacher, :authorize_super_user,
+  prepend_before_action :authorize_super_user,
                         only: [:destroy, :update, :create]
   prepend_before_action :authenticate
   before_action :hide_unpublished, only: [:index]
@@ -8,7 +8,7 @@ class Api::CoursesController < ApplicationController
   before_action :authorize_student, only: [:register, :unregister]
 
   def register
-    get_resource.register @current_user 
+    get_resource.register @current_user, params.permit(:team)
     render json: { message: messages[:registration_success] }, status: :created
   end
 
@@ -41,7 +41,7 @@ class Api::CoursesController < ApplicationController
 
   def order_args
     if query_params[:name].present?
-      'length(courses.name) ASC'
+     Arel.sql('length(courses.name) ASC')
     else
       :created_at
     end

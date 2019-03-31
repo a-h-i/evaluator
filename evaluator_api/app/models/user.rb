@@ -75,6 +75,10 @@ class User < ApplicationRecord
     all_fields - un_permitted
   end
 
+  def team(course_id)
+    StudentCourseRegistration.where(student_id: id, course_id: course_id).pluck(:team).first
+  end
+
   private
 
   def super_user_teacher
@@ -102,6 +106,7 @@ class User < ApplicationRecord
       end
     end
   end
+
 
 
 end

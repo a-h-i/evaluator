@@ -17,4 +17,12 @@ class StudentCourseRegistration < ApplicationRecord
   belongs_to :course, inverse_of: :student_course_registrations
   belongs_to :student, class_name: 'User', inverse_of: :student_course_registrations
   validates :student, :course, presence: true
+  validate :team_not_empty
+
+  private
+  def team_not_empty
+    if !team.nil? && team.strip.length < 1
+      errors.add(:team, 'can either be null or non blank string')
+    end
+  end
 end

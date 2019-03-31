@@ -7,17 +7,14 @@ class Api::SubmissionsController < ApplicationController
   after_action :no_cache, only: [:create, :destroy, :download]
   after_action :cull_and_run, only: [:create]
 
-  
-
   def download
     options = {
       type: @submission.mime_type,
       disposition: "attachment",
-      filename: @submission.created_at.strftime("%Y_%j_%H_%M_%S_%L") +  "_#{@submission.id}_#{@submission.file_name}",
+      filename: @submission.created_at.strftime("%Y_%j_%H_%M_%S_%L") + "_#{@submission.id}_#{@submission.file_name}",
     }
     send_file @submission.file_path, options
   end
-
 
   protected
 
@@ -27,17 +24,17 @@ class Api::SubmissionsController < ApplicationController
   end
 
   def base_index_query
-    query = Submission.viewable_by_user(@current_user).where(project: @project)
+    query = Submission.viewable_by_user(@current_user, @project.course_id).where(project: @project)
     possible_user_fields = User.queriable_fields
     # A query based on user fields
     if params.key?(:submitter) &&
        user_params = params[:submitter].permit(possible_user_fields)
       query = query.joins(:submitter) unless user_params.empty?
       user_params.keys.each do |key|
-        query = if key.to_s.in? ['email', 'name']
+        query = if key.to_s.in? ["email", "name"]
                   query.where("users.#{key} ILIKE ?", "%#{user_params[key]}%")
                 else
-                  query.where(users: { key => user_params[key] })
+                  query.where(users: {key => user_params[key]})
                 end
       end
     end
@@ -52,7 +49,7 @@ class Api::SubmissionsController < ApplicationController
   end
 
   def set_parent
-    @project ||= Project.cache_fetch({id: params[:project_id]}) {Project.find params[:project_id]}
+    @project ||= Project.cache_fetch({id: params[:project_id]}) { Project.find params[:project_id] }
   end
 
   def can_view
@@ -69,11 +66,12 @@ class Api::SubmissionsController < ApplicationController
     attributes.delete :submitter_id
     permitted = params.permit attributes
     inferred = {
-      submitter: @current_user
+      submitter: @current_user,
     }
     inferred[:project] = @project unless @project.nil?
     permitted.merge inferred
   end
+
   def order_args
     { created_at: :desc }
   end

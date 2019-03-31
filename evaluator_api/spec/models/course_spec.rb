@@ -25,6 +25,7 @@ RSpec.describe Course, type: :model do
   it { should have_many :projects }
   it { should have_many :students }
   it { should have_many :student_course_registrations }
+  it { should have_many :submissions }
 
   describe 'factory' do
     let(:course) { FactoryBot.build(:course) }

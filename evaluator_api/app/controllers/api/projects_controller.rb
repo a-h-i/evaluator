@@ -1,6 +1,6 @@
 class Api::ProjectsController < ApplicationController
   prepend_before_action :set_parent, only: [:create, :index]
-  prepend_before_action :authorize_teacher, :authorize_super_user,
+  prepend_before_action :authorize_super_user,
                         only: [:destroy, :update, :create]
   prepend_before_action :authenticate
   before_action :hide_unpublished, only: [:index]
@@ -39,12 +39,17 @@ class Api::ProjectsController < ApplicationController
   end
 
   def params_helper
-    attributes = model_attributes
+
+    attributes = model_attributes << :spec_type << :spec_subtype << {dependencies: []}
     attributes.delete :id
     attributes.delete :course_id
+    attributes.delete :detail
     attributes.delete :reruning_submissions unless @current_user.super_user?
     permitted = params.permit attributes
     permitted[:course] = @course unless @course.nil?
+    if permitted[:dependencies].nil?
+      permitted[:dependencies] = []
+    end
     permitted
   end
 
@@ -64,7 +69,7 @@ class Api::ProjectsController < ApplicationController
 
   def order_args
     if query_params[:name].present?
-      "length(projects.name) ASC"
+      Arel.sql("length(projects.name) ASC")
     else
       { created_at: :desc }
     end

@@ -23,7 +23,6 @@ To list the services of public zone
 we want to remove all services except ssh from the default zone, for each service we do
 `firewall-cmd --zone=public --remove-service=mdns --permanent` mdns is a service
 
-now we want to add http and https services
 
 Change default target to DROP
 ```

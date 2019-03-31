@@ -61,5 +61,26 @@ module FileAttachable
     IO.copy_stream(file_object, path)
     file.close
   end
+
+  def file=(val)
+    self.file_attachable_storage_file_object = val
+    self.file_name = if val.respond_to? :original_filename
+       val.original_filename
+    elsif val.respond_to? :filename
+      val.filename
+    else
+      File.basename(val.path)
+    end
+      self.mime_type =  if val.respond_to? :content_type
+      val.content_type
+    else
+      'application/binary'
+    end
+    file
+  end
+
+  def file
+    self.file_attachable_storage_file_object
+  end
   
 end

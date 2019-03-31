@@ -27,31 +27,9 @@ class Submission < ApplicationRecord
   has_many :results
   before_validation :set_values
   before_validation {self.file_name = self.class.sanitize_file_name(self.file_name) unless self.file_name.nil?}
-  validates :project, :submitter, presence: true
+  validates :project, :submitter, :course, presence: true
   validate :published_project_and_course
   validate :project_can_submit
-  
-  
-  def file=(val)
-    self.file_attachable_storage_file_object = val
-    self.file_name = if val.respond_to? :original_filename
-       val.original_filename
-    elsif val.respond_to? :filename
-      val.filename
-    else
-      File.basename(val.path)
-    end
-      self.mime_type =  if val.respond_to? :content_type
-      val.content_type
-    else
-      'application/binary'
-    end
-    file
-  end
-
-  def file
-    :file_attachable_storage_file_object
-  end
 
   def evaluate
     MessagingService.queue_submission_eval_job(self)
@@ -62,9 +40,14 @@ class Submission < ApplicationRecord
       project: @project).count > Rails.application.config.configurations[:max_num_submissions]
   end
 
-  def self.viewable_by_user(user)
+  def self.viewable_by_user(user, course_id)
     if user.student?
-      user.submissions
+      team = user.team(course_id)
+      if team.nil? || team.length < 1
+        user.submissions
+      else  
+        where('submitter_id = ? OR (team IS NOT NULL AND team = ?)', user.id, team)
+      end
     else
       self
     end
@@ -79,7 +62,7 @@ class Submission < ApplicationRecord
   end
 
   def is_viewable_by?(user)
-    user.teacher? || user.id == submitter_id
+    user.teacher? || user.id == submitter_id || (team != nil && team == user.team(course_id))
   end
 
   private
@@ -90,7 +73,7 @@ class Submission < ApplicationRecord
   end
 
   def set_team
-    self.team = StudentCourseRegistration.where(student_id: submitter_id, course_id: course_id).pluck(:team).first if submitter.present? && project.present?
+    self.team = submitter.team(course_id) if submitter.present? && project.present?
   end
 
   def set_course

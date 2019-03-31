@@ -12,6 +12,7 @@
 #  published            :boolean          default(FALSE), not null
 #  quiz                 :boolean          default(FALSE), not null
 #  reruning_submissions :boolean          default(FALSE), not null
+#  detail               :json             not null
 #
 # Indexes
 #
@@ -26,5 +27,8 @@ FactoryBot.define do
     start_date { Faker::Time.backward }
     name { (0...30).map { ("a".."z").to_a[rand(26)] }.join }
     course { FactoryBot.create(:course) }
+    spec_type {Project::JAVA_8_SPEC_TYPE}
+    spec_subtype {Project::JUNIT_4_SUB_TYPE}
+    dependencies {[]}
   end
 end

@@ -76,11 +76,11 @@ class Api::UsersController < ApplicationController
 
   def order_args
     if query_params[:name].present?
-      "length(users.name) ASC"
+     Arel.sql "length(users.name) ASC"
     elsif query_params[:email].present?
-      "length(users.email) ASC"
+      Arel.sql "length(users.email) ASC"
     elsif query_params[:team].present?
-      "length(users.team) ASC"
+      Arel.sql "length(users.team) ASC"
     else
       :created_at
     end

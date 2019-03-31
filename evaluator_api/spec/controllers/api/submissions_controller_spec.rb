@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Api::SubmissionsController, type: :controller do
+RSpec.describe Api::SubmissionsController, type: :controller  do
   context "create" do
     let(:student) { FactoryBot.create(:student) }
     let(:teacher) { FactoryBot.create(:teacher) }
@@ -30,6 +30,7 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       end.to change(Submission, :count).by(1)
       expect(response).to be_created
       expect(Submission.first.submitter.id).to eql student.id
+      expect(File.exist?(Submission.first.file_path)).to be true
     end
     it "allows teacher" do
       expect do
@@ -97,13 +98,13 @@ RSpec.describe Api::SubmissionsController, type: :controller do
     it 'allows submitter to download'do
       set_token @submission.submitter.token
       get :download, params: {id: @submission.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
 
     it 'allows a teacher to download'  do
       set_token FactoryBot.create(:teacher).token
       get :download, params: {id: @submission.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'does not allow an unverified user' do
       set_token FactoryBot.create(:teacher, verified: false).token
@@ -117,13 +118,13 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       get :download, params: { id: @submission.id }
       expect(response).to be_forbidden
     end
-    it 'does not allow student of same team to download' do
+    it 'allows student of same team to download' do
       other = FactoryBot.create(:student)
       set_token other.token
       @team_submission.course.register other, @team_submission.team
 
       get :download, params: { id: @team_submission.id }
-      expect(response).to be_forbidden
+      expect(response.successful?).to be true
     end
   end
   context 'show' do
@@ -139,24 +140,24 @@ RSpec.describe Api::SubmissionsController, type: :controller do
     it 'allows submitter to download' do
       set_token @submission.submitter.token
       get :show, params: {id: @submission.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response).to include(
         :id, :submitter_id, :project_id, :created_at, :updated_at
       )
     end
 
-    it 'does not allow student of same team show' do
+    it 'allow student of same team show' do
       other = FactoryBot.create(:student)
       set_token other.token
       @submission.course.register other, @submission.team
       get :show, params: {id: @submission.id}
-      expect(response).to be_forbidden
+      expect(response.successful?).to be true
     end
 
     it 'allows a teacher to download' do
       set_token FactoryBot.create(:teacher).token
       get :show, params: {id: @submission.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'does not allow an unverified user' do
       set_token FactoryBot.create(:teacher, verified: false).token
@@ -184,52 +185,64 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       teacher = FactoryBot.create(:teacher)
       set_token teacher.token
       get :index, params: {project_id: @default_project.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to_not eql 0
     end
     it 'allows a student' do
       student = User.students.first
       set_token student.token
       get :index, params: {project_id: @default_project.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it 'has pagination' do
       student = User.students.first
       set_token student.token
       get :index, params: {project_id: @default_project.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response).to include(
         :submissions, :page, :page_size, :total_pages
       )
     end
     it 'Student cant see other students submission' do
       student = FactoryBot.create(:student, verified: true)
-      @default_project.course.register student, Submission.first.team
+      @default_project.course.register(student, Submission.first.team + 'biot')
       set_token student.token
       get :index, params: {project_id: @default_project.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 0
     end
 
     it 'student cant query by team' do
       team = Submission.first.team
       student = FactoryBot.create(:student, verified: true)
-      @default_project.course.register(student)
+      @default_project.course.register(student, team *2)
       set_token student.token
-      get :index, params: {project_id: @default_project.id}
-      expect(response).to be_success
+      get :index, params: {project_id: @default_project.id, team: team}
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 0
     end
 
-    it 'students can not see own team submissions' do
+    it 'students can see own team submissions' do
       submission = Submission.first
       team = submission.team
       student = FactoryBot.create(:student, verified: true)
       submission.course.register student, team
       set_token student.token
       bypass_rescue
-      get :index, params: { project_id: @default_project.id, submitter: { team: team } }
-      expect(response).to be_success
+      get :index, params: { project_id: @default_project.id}
+      expect(response.successful?).to be true
+      expect(json_response[:submissions].size).to eql 1
+    end
+
+    it 'does not match blank team' do
+      submission = Submission.first
+      team = submission.team
+      student = FactoryBot.create(:student, verified: true)
+      submission.course.register student, ''
+      set_token student.token
+      bypass_rescue
+      get :index, params: { project_id: @default_project.id, team: team }
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 0
     end
 
@@ -239,7 +252,7 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       3.times { FactoryBot.create(:team_submission, project: @default_project, submitter: student) }
       set_token student.token
       get :index, params: { project_id: @default_project.id }
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 3
     end
 
@@ -254,7 +267,7 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       1.times { FactoryBot.create(:team_submission, project: @default_project, submitter: student_two) }
       set_token teacher.token
       get :index, params: { project_id: @default_project.id, submitter: { name: student.name } }
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 5
       correct_ids = json_response[:submissions].reduce(true) do |memo, item|
         memo &&  [student.id, student_two.id].include?(item[:submitter_id])
@@ -272,7 +285,7 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       FactoryBot.create(:submission, project: @default_project, submitter: student_two)
       set_token teacher.token
       get :index, params: { project_id: @default_project.id, team: 'Dat gap' }
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 2
       correct_ids = json_response[:submissions].reduce(true) do |memo, item|
         memo &&  [student.id, student_two.id].include?(item[:submitter_id])
@@ -286,7 +299,7 @@ RSpec.describe Api::SubmissionsController, type: :controller do
       3.times { FactoryBot.create(:submission, project: @default_project, submitter: student) }
       set_token teacher.token
       get :index, params: { project_id: @default_project.id, submitter: { email: student.email } }
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:submissions].size).to eql 3
       correct_ids = json_response[:submissions].reduce(true) do |memo, item|
         memo &&  item[:submitter_id] == student.id

@@ -12,7 +12,7 @@ RSpec.describe Api::CoursesController, type: :controller do
     it "allow a student to index" do
       set_token student.token
       get :index, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response).to include(
         :courses, :page, :page_size, :total_pages
       )
@@ -20,7 +20,7 @@ RSpec.describe Api::CoursesController, type: :controller do
     it "allow a teacher to index" do
       set_token teacher.token
       get :index, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it "has pagination" do
       set_token student.token
@@ -176,7 +176,7 @@ RSpec.describe Api::CoursesController, type: :controller do
       old_json = course.as_json
       set_token admin.token
       put :update, format: :json, params: {published: true, id: course.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       course.reload
       expect(course.as_json).to_not match old_json
     end
@@ -283,7 +283,7 @@ RSpec.describe Api::CoursesController, type: :controller do
   #       set_token student.token
   #       delete :unregister, format: :json, params: { id: published_course.id }
   #     end.to change(StudentCourseRegistration, :count).by -1
-  #     expect(response).to be_success
+  #     expect(response.successful?).to be true
   #   end
   # end
 end

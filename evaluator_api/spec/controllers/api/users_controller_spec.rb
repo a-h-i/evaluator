@@ -13,12 +13,12 @@ RSpec.describe Api::UsersController, type: :controller do
     it "respond to index action" do
       set_token teacher.token
       get :index, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it "has pagination" do
       set_token teacher.token
       get :index, params: {page: 1, page_size: students.length}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response).to include(
         :users, :page, :page_size, :total_pages
       )
@@ -58,7 +58,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "show the correct user" do
       set_token student.token
       get :show, format: :json, params: {id: student.id}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(json_response[:id]).to eql student.id
       expect(json_response).to include(
         :id, :email, :student, :major, :guc_suffix, :guc_prefix, :name,
@@ -97,7 +97,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "allows a super user to set another teacher as a super user" do
       set_token admin.token
       put :update, params: { id: teacher_one.id, super_user: true }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       teacher_one.reload
       expect(teacher_one.super_user?).to be true
     end
@@ -129,7 +129,7 @@ RSpec.describe Api::UsersController, type: :controller do
       old_digest = teacher_one.password_digest
       set_token teacher_one.token
       put :update, params: { id: teacher_one.id, password: "new password!" }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       teacher_one.reload
       expect(teacher_one.password_digest).to_not eql old_digest
     end
@@ -149,7 +149,7 @@ RSpec.describe Api::UsersController, type: :controller do
       old_json = student_two.as_json
       set_token student_two.token
       put :update, params: { id: student_two.id, password: "new password!", name: "new name!" }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       student_two.reload
       expect(student_two.as_json).to_not match old_json
     end
@@ -157,7 +157,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "disallow a user to change its type" do
       set_token student_two.token
       put :update, params: { id: student_two.id, student: false }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       student_two.reload
       expect(student_two.student?).to be true
     end
@@ -165,7 +165,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "disallow a teacher from becoming a super user" do
       set_token teacher_one.token
       put :update, params: { id: teacher_one.id, super_user: true }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       teacher_one.reload
       expect(teacher_one.super_user?).to be false
     end
@@ -173,7 +173,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "disallow a student from becoming a super user" do
       set_token student_one.token
       put :update, params: { id: student_one.id, super_user: true }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       student_one.reload
       expect(student_one.super_user?).to be false
     end
@@ -181,7 +181,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "disallow a user to change verification" do
       set_token teacher_two.token
       put :update, params: { id: teacher_two.id, verified: false }, format: :json
-      expect(response).to be_success
+      expect(response.successful?).to be true
       teacher_two.reload
       expect(teacher_two.verified?).to be true
     end
@@ -191,7 +191,7 @@ RSpec.describe Api::UsersController, type: :controller do
       set_token admin.token
       put :update, params: {id: student_one.id, major: old_major + "3"}, format: :json
       student_one.reload
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(student_one.major).to_not eql old_major
     end
   end
@@ -257,7 +257,7 @@ RSpec.describe Api::UsersController, type: :controller do
     it "should send reset email" do
       allow(MessagingService).to receive(:send_reset_email)
       get :reset_password, params: {email: Base64.urlsafe_encode64(user.email)}
-      expect(response).to be_success
+      expect(response.successful?).to be true
       expect(MessagingService).to have_received(:send_reset_email)
     end
     it "should confirm reset" do
@@ -265,7 +265,7 @@ RSpec.describe Api::UsersController, type: :controller do
       old_digest = user.password_digest
       new_pass = "password"
       put :confirm_reset, params: { token: token, password: new_pass }
-      expect(response).to be_success
+      expect(response.successful?).to be true
       user.reload
       expect(user.password_digest).to_not eql old_digest
     end
@@ -297,22 +297,6 @@ RSpec.describe Api::UsersController, type: :controller do
     end
   end
 
-  # context ".resend_verify" do
-  #   let(:user) { FactoryBot.create(:teacher, verified: false) }
-  #   it "does not resend to verified users" do
-  #     user.verified = true
-  #     user.save!
-  #     get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
-  #     expect(response).to be_bad_request
-  #   end
-  #   it "sends email" do
-  #     allow(MessagingService).to receive(:send_verification_email)
-  #     get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
-  #     expect(response).to be_success
-  #     expect(MessagingService).to have_received(:send_verification_email)
-  #   end
-  # end
-
   context ".destroy" do
     let(:teacher) { FactoryBot.create(:teacher) }
     let(:student) { FactoryBot.create(:student) }
@@ -338,7 +322,7 @@ RSpec.describe Api::UsersController, type: :controller do
       expect do
         delete :destroy, params: {id: student.id}
       end.to change(User, :count).by(-1)
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
     it "allows an admin to delete a teacher" do
       teacher
@@ -346,7 +330,7 @@ RSpec.describe Api::UsersController, type: :controller do
       expect do
         delete :destroy, params: {id: teacher.id}
       end.to change(User, :count).by(-1)
-      expect(response).to be_success
+      expect(response.successful?).to be true
     end
   end
 end

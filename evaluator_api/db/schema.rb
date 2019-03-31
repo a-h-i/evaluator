@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_23_040526) do
+ActiveRecord::Schema.define(version: 2019_03_31_164638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 2019_03_23_040526) do
     t.boolean "published", default: false, null: false
     t.boolean "quiz", default: false, null: false
     t.boolean "reruning_submissions", default: false, null: false
+    t.json "detail", null: false
     t.index ["course_id", "name"], name: "projects_course_id_name_key", unique: true
     t.index ["course_id"], name: "index_projects_on_course_id"
     t.index ["created_at", "published"], name: "index_projects_on_created_at_and_published", order: { created_at: :desc }
@@ -82,9 +83,9 @@ ActiveRecord::Schema.define(version: 2019_03_23_040526) do
     t.datetime "updated_at", null: false
     t.integer "timeout", default: 60, null: false
     t.text "name", null: false
-    t.jsonb "detail", null: false
     t.boolean "hidden", default: true, null: false
     t.text "file_name", null: false
+    t.text "mime_type", null: false
     t.index ["project_id", "name"], name: "test_suites_project_id_name_key", unique: true
   end
 

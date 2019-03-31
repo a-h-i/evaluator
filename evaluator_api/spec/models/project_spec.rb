@@ -12,6 +12,7 @@
 #  published            :boolean          default(FALSE), not null
 #  quiz                 :boolean          default(FALSE), not null
 #  reruning_submissions :boolean          default(FALSE), not null
+#  detail               :json             not null
 #
 # Indexes
 #
@@ -27,6 +28,7 @@ RSpec.describe Project, type: :model do
   it { should belong_to :course }
   it { should have_many :submissions }
   it { should have_many :test_suites }
+  it { should have_many :results }
   it { should validate_presence_of :name }
   it { should validate_presence_of :due_date }
   it { should validate_presence_of :course }
