@@ -24,9 +24,9 @@ class Api::SubmissionsController < ApplicationController
   end
 
   def base_index_query
-    query = Submission.viewable_by_user(@current_user, @project.course_id).where(project: @project)
+    query = Submission.viewable_by_user(@current_user, @project.course_id).where(project_id: @project.id)
     possible_user_fields = User.queriable_fields
-    # A query based on user fields
+    # query based on user fields
     if params.key?(:submitter) &&
        user_params = params[:submitter].permit(possible_user_fields)
       query = query.joins(:submitter) unless user_params.empty?

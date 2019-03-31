@@ -19,7 +19,7 @@
 
 require "rails_helper"
 
-RSpec.describe TestSuite, type: :model do
+RSpec.describe TestSuite, type: :model, focus: true do
   let(:subject) { FactoryBot.create(:test_suite) }
   it { should belong_to :project }
   it { should have_many :results }

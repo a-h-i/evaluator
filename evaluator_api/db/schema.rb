@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_31_164638) do
+ActiveRecord::Schema.define(version: 2019_03_31_193418) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_164638) do
     t.text "file_name", null: false
     t.text "team"
     t.index ["submitter_id", "project_id", "created_at"], name: "index_submissions_on_submitter_id_and_project_id_and_created_at"
+    t.index ["team"], name: "index_submissions_on_team"
   end
 
   create_table "test_suites", force: :cascade do |t|

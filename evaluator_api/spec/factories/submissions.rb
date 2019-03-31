@@ -15,6 +15,7 @@
 # Indexes
 #
 #  index_submissions_on_submitter_id_and_project_id_and_created_at  (submitter_id,project_id,created_at)
+#  index_submissions_on_team                                        (team)
 #
 
 FactoryBot.define do
