@@ -27,7 +27,7 @@ class Submission < ApplicationRecord
   # dependent results are destroyed on the db level
   has_many :results
   before_validation :set_values
-  before_validation {self.file_name = self.class.sanitize_file_name(self.file_name) unless self.file_name.nil?}
+  before_validation { self.file_name = self.class.sanitize_file_name(self.file_name) unless self.file_name.nil? }
   validates :project, :submitter, :course, presence: true
   validate :published_project_and_course
   validate :project_can_submit
@@ -37,8 +37,9 @@ class Submission < ApplicationRecord
   end
 
   def cull
-    MessagingService.queue_submission_cul_job(submitter, project) if Submission.where(submitter: @current_user,
-      project: @project).count > Rails.application.config.configurations[:max_num_submissions]
+    if Submission.where(submitter_id: submitter_id, project_id: project_id).count > Rails.application.config.configurations[:max_num_submissions]
+      MessagingService.queue_submission_cul_job(submitter, project)
+    end
   end
 
   def self.viewable_by_user(user, course_id)
@@ -46,20 +47,22 @@ class Submission < ApplicationRecord
       team = user.team(course_id)
       if team.nil? || team.length < 1
         user.submissions
-      else  
-        where('submitter_id = ? OR (team IS NOT NULL AND team = ?)', user.id, team)
+      else
+        where("submitter_id = ? OR (team IS NOT NULL AND team = ?)", user.id, team)
       end
     else
       self
     end
   end
+
   def file_path
     @file_path_internal ||= get_file_path(file_name)
   end
+
   def get_file_path(file_name)
-    timestamp = created_at.strftime('%Y_%j_%H_%M_%S_%L')
+    timestamp = created_at.strftime("%Y_%j_%H_%M_%S_%L")
     ext = File.extname(file_name).empty? ? ".zip" : File.extname(file_name)
-    File.join Rails.application.config.submissions_path,  "#{id}_#{timestamp}#{ext}"
+    File.join Rails.application.config.submissions_path, "#{id}_#{timestamp}#{ext}"
   end
 
   def is_viewable_by?(user)
@@ -82,14 +85,14 @@ class Submission < ApplicationRecord
   end
 
   def project_can_submit
-    errors.add(:project, 'Must be before deadline and after start date') unless
+    errors.add(:project, "Must be before deadline and after start date") unless
       project.nil? || project.can_submit?
   end
 
   def published_project_and_course
     unless project.nil?
       if course.nil? || !project.published? || !course.published?
-        errors.add(:project, 'Must be published and belong to a published course')
+        errors.add(:project, "Must be published and belong to a published course")
       end
     end
   end
