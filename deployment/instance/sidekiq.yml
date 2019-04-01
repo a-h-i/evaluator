@@ -3,6 +3,7 @@
 staging:
   :concurrency: 3
 production:
-  :concurrency: 3
+  :concurrency: 20
 :queues:
   - mailers
+  - maint

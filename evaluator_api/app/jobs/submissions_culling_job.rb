@@ -1,5 +1,5 @@
 class SubmissionsCullingJob < ApplicationJob
-  queue_as :cleanup
+  queue_as :maint
 
   def perform(submitter, project)
     Submission.transaction do

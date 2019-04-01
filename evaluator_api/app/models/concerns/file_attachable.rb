@@ -3,6 +3,7 @@ module FileAttachable
 
   included do
     before_save :file_attachable_before_save_callback
+    before_destroy :file_attachable_before_save_callback
     after_commit :file_attachable_after_commit_callback
   end
   attr_accessor :file_attachable_storage_file_object
@@ -16,7 +17,7 @@ module FileAttachable
     elsif transaction_include_any_action? [:create]
       :create
     else
-      :destory
+      :destroy
     end
   end
 
@@ -31,21 +32,19 @@ module FileAttachable
     file_attachable_reset_storage
     # if there was an old filename, we need to move the file once commited 
     if persisted?
-      return unless file_name_changed?
       old_name = file_name_was.dup
       new_name = file_name
-      @file_attachable_storage_ops.push Proc.new do |operation|
-        case operation
-        when :update
+      func = lambda do |operation|
+        if operation == :update and file_name_changed?
           move_file(get_file_path(old_name), get_file_path(new_name))
-        when :destroy
+        elsif operation == :destroy
           remove_file(get_file_path(old_name))
         end
       end
+      @file_attachable_storage_ops.push(func)
     else
       # New file
       @file_attachable_storage_ops.push Proc.new { | operation |save_file(get_file_path(file_name), file_attachable_storage_file_object) if operation.eql? :create }
-
     end
   end
   def remove_file(path)

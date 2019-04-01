@@ -22,13 +22,14 @@ We need to establish a tunnel to the PG and Cache instances
 # Log Directory
 `mkdir /var/log/evaluator`
 
-# Mailer BG Worker
+# Mailer and maint BG Worker
 
 Sidekiq conf [sidekiq.yml](sidekiq.yml)
 
 start with `sidekiq -C /some/abs/path/sidekiq.yml`
 
 You can use [this systemd service](evaluator-sidekiq.service)
+make sure the db pool for the worker is large enough to accomidate the number of threads.
 
 # Start unicorn
 `bundle e --keep-file-descriptors unicorn -c ../deployment/instance/unicorn.conf.rb -D -E none`

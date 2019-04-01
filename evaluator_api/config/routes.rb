@@ -21,6 +21,11 @@ Rails.application.routes.draw do
         # delete :registration, action: :unregister
       end
       resources :projects, shallow: true, except: [:new] do
+        resources :test_suites, shallow: true, except: [:new, :update] do
+          member do
+            get :download, action: :download
+          end
+        end
         resources :submissions, shallow: true, except: [:destroy, :new, :update] do
           member do
             get :download

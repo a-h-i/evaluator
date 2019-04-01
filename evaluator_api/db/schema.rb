@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_31_195801) do
+ActiveRecord::Schema.define(version: 2019_04_01_211038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_trgm"
@@ -87,6 +87,7 @@ ActiveRecord::Schema.define(version: 2019_03_31_195801) do
     t.boolean "hidden", default: true, null: false
     t.text "file_name", null: false
     t.text "mime_type", null: false
+    t.json "detail", null: false
     t.index ["project_id", "hidden", "created_at"], name: "index_test_suites_on_project_id_and_hidden_and_created_at", order: { created_at: :desc }
     t.index ["project_id", "name"], name: "test_suites_project_id_name_key", unique: true
   end

@@ -11,10 +11,12 @@
 #  hidden     :boolean          default(TRUE), not null
 #  file_name  :text             not null
 #  mime_type  :text             not null
+#  detail     :json             not null
 #
 # Indexes
 #
-#  test_suites_project_id_name_key  (project_id,name) UNIQUE
+#  index_test_suites_on_project_id_and_hidden_and_created_at  (project_id,hidden,created_at DESC)
+#  test_suites_project_id_name_key                            (project_id,name) UNIQUE
 #
 
 FactoryBot.define do
@@ -28,6 +30,9 @@ FactoryBot.define do
                        "test_suites/M1PrivateTest.zip")
       File.open(path, "rb")
     end
-    name {"private"}
+    name {(0...30).map { ("a".."z").to_a[rand(26)] }.join}
+    detail do
+      {package_name: 'public'}
+    end
   end
 end

@@ -46,4 +46,11 @@ RSpec.describe Submission, type: :model do
     expect(File.exist?(subject.file_path)).to be true
   end
 
+  it 'deletes file' do
+    path = subject.file_path
+    expect(File.exist?(path)).to be true
+    subject.destroy
+    expect(File.exist?(path)).to be false
+  end
+
 end

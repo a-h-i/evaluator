@@ -11,10 +11,12 @@
 #  hidden     :boolean          default(TRUE), not null
 #  file_name  :text             not null
 #  mime_type  :text             not null
+#  detail     :json             not null
 #
 # Indexes
 #
-#  test_suites_project_id_name_key  (project_id,name) UNIQUE
+#  index_test_suites_on_project_id_and_hidden_and_created_at  (project_id,hidden,created_at DESC)
+#  test_suites_project_id_name_key                            (project_id,name) UNIQUE
 #
 
 require "rails_helper"
@@ -25,6 +27,7 @@ RSpec.describe TestSuite, type: :model do
   it { should have_many :results }
   it { should validate_presence_of :name }
   it { should validate_presence_of :project }
+  it { should validate_presence_of :detail }
   it { should validate_uniqueness_of(:name).scoped_to(:project_id).case_insensitive }
 
   it "sets mime type" do

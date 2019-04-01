@@ -17,7 +17,7 @@
 # Indexes
 #
 #  index_projects_on_course_id                 (course_id)
-#  index_projects_on_created_at_and_published  (created_at DESC,published)
+#  index_projects_on_published_and_created_at  (published,created_at DESC)
 #  projects_course_id_name_key                 (course_id,name) UNIQUE
 #
 

@@ -11,19 +11,23 @@
 #  hidden     :boolean          default(TRUE), not null
 #  file_name  :text             not null
 #  mime_type  :text             not null
+#  detail     :json             not null
 #
 # Indexes
 #
-#  test_suites_project_id_name_key  (project_id,name) UNIQUE
+#  index_test_suites_on_project_id_and_hidden_and_created_at  (project_id,hidden,created_at DESC)
+#  test_suites_project_id_name_key                            (project_id,name) UNIQUE
 #
 
 class TestSuite < ApplicationRecord
   include FileSanitizer
   include FileAttachable
   belongs_to :project
-  has_many :results, dependent: :destroy
+  # results are destroyed on the db level
+  has_many :results
   validates :name, :project, presence: true
   validates :name, uniqueness: { case_sensitive: false, scope: :project_id }
+  validates :detail, presence: true
   before_validation {self.file_name = self.class.sanitize_file_name(self.file_name) unless self.file_name.nil?}
   
   def file_path
@@ -40,4 +44,12 @@ class TestSuite < ApplicationRecord
     user.teacher? || !hidden
   end
 
+
+  def self.viewable_by_user(user)
+    if user.teacher?
+      self
+    else
+      where(hidden: false)
+    end
+  end
 end

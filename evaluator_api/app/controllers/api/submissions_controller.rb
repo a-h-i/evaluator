@@ -1,7 +1,7 @@
 class Api::SubmissionsController < ApplicationController
   include XAccelBufferable
   prepend_before_action :set_parent, only: [:create, :index]
-  prepend_before_action :authenticate, :authorize
+  prepend_before_action :authenticate
   before_action :can_view, only: [:show, :download]
   after_action :add_bufferable_header, only: [:download]
   after_action :no_cache, only: [:create, :destroy, :download]
@@ -62,7 +62,6 @@ class Api::SubmissionsController < ApplicationController
     attributes = model_attributes << :file
     attributes.delete :id
     attributes.delete :project_id
-    attributes.delete :solution_id
     attributes.delete :submitter_id
     permitted = params.permit attributes
     inferred = {
