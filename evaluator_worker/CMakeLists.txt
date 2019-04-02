@@ -4,13 +4,12 @@ cmake_minimum_required(VERSION 3.10)
 project(evworker VERSION 1.0 LANGUAGES CXX
 DESCRIPTION  "Evaluator Worker for evaluating submission."
 )
-add_compile_definitions(VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
+add_compile_definitions(VERSION_MAJOR="${PROJECT_VERSION_MAJOR}" 
 VERSION_MINOR="${PROJECT_VERSION_MINOR}"
 )
 include(GNUInstallDirs)
 # Target names
 set(WORKER_NAME "evworker")
-set(TEST_EXEC_NAME "evworker_specs")
 set(DAEMON_NAME "evworkerd")
 
 
@@ -65,7 +64,6 @@ MARK_AS_ADVANCED(
 # Define targets
 
 add_executable(${WORKER_NAME} "")
-add_executable(${TEST_EXEC_NAME} "")
 add_executable(${DAEMON_NAME} "")
 
 # configure_file(src/include/config.h.in ${CMAKE_SOURCE_DIR}/src/include/config.h @ONLY)
@@ -92,10 +90,8 @@ COMPONENT RUNTIME
 
 target_compile_features(${WORKER_NAME} PUBLIC cxx_std_20)
 target_compile_features(${DAEMON_NAME} PUBLIC cxx_std_20)
-target_compile_features(${TEST_EXEC_NAME} PUBLIC cxx_std_20)
 set_target_properties(${WORKER_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${DAEMON_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-set_target_properties(${TEST_EXEC_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 
 
 # Uninstall command

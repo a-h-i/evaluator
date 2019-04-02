@@ -19,12 +19,13 @@
 namespace evworker {
 
 evworker_ctx_t::evworker_ctx_t(
-    boost::program_options::variables_map const &vm) noexcept(false) try {
+    boost::program_options::variables_map const *config) noexcept(false) try {
   //
   // ─── SETUP REDIS
   // ────────────────────────────────────────────────────────────────
   //
-
+  this->config = config;
+  const boost::program_options::variables_map &vm = config;
   const std::string redis_host =
       vm[options::REDIS_HOST].as<options::redis_host_t>();
   const int redis_port = vm[options::REDIS_PORT].as<options::redis_port_t>();

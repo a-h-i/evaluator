@@ -13,11 +13,14 @@ list(APPEND SRCS fixtures/sample_config.ini)
 
 
 list(APPEND WORKER_SOURCES src/worker/worker.cpp)
-list(APPEND WORKER_SOURCES src/worker_main.cpp)
 list(APPEND WORKER_SOURCES src/worker/redis.cpp)
 list(APPEND WORKER_SOURCES src/worker/worker_ctx_raii.cpp)
 list(APPEND WORKER_SOURCES src/worker/worker_ctx_redis.cpp)
-list(APPEND WORKER_SOURCES src/worker/pg.cpp)
+list(APPEND WORKER_SOURCES src/db/pg.cpp)
+list(APPEND WORKER_SOURCES src/db/submission.cpp)
+list(APPEND WORKER_SOURCES src/db/test_suite.cpp)
+list(APPEND WORKER_SOURCES src/db/helpers.cpp)
+list(APPEND WORKER_SOURCES src/db/project.cpp)
 
 # ────────────────── Daemon Sources ──────────────────
 
@@ -25,6 +28,8 @@ list(APPEND DAEMON_SOURCES src/daemon_main.cpp)
 
 # ────────────────── Spec Sources
 list(APPEND SPEC_SRCS src/test/options_spec.cpp)
+list(APPEND SPEC_SRCS src/test/redis_spec.cpp)
+list(APPEND SPEC_SRCS src/test/pg_spec.cpp)
 
 file(COPY fixtures DESTINATION .)
 # ────────────────── Add sources to targets ────────────────── 
@@ -33,6 +38,7 @@ target_sources(${WORKER_NAME}
   PRIVATE
   ${SRCS}
   ${WORKER_SOURCES}
+  src/worker_main.cpp
 )
 
 target_sources(${DAEMON_NAME}
@@ -41,11 +47,6 @@ target_sources(${DAEMON_NAME}
   ${DAEMON_SOURCES}
 )
 
-target_sources(${TEST_EXEC_NAME}
-  PRIVATE
-  ${SRCS}
-  ${SPEC_SRCS}
-)
 
 # ──────────────────  Boost Definitions ────────────────── 
 add_compile_definitions(BOOST_ALL_DYN_LINK=1)
@@ -59,7 +60,7 @@ set(BOOST_REGEX_RECURSIVE TRUE)
 
 # ────────────────── Dependencies
 find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS system unit_test_framework program_options REQUIRED)
+find_package(Boost COMPONENTS system filesystem unit_test_framework program_options REQUIRED)
 find_package(Evspec REQUIRED CONFIG)
 find_package(PostgreSQL REQUIRED)
 find_package(Hiredis REQUIRED)
@@ -73,7 +74,7 @@ list(APPEND LIBS ${HIREDIS_LIBRARIES})
 list(APPEND LIBS ${Boost_PROGRAM_OPTIONS_LIBRARY})
 list(APPEND LIBS ${UUID_LIBRARY})
 list(APPEND LIBS -lstdc++fs)
-
+list(APPEND LIBS ${Boost_FILESYSTEM_LIBRARY})
 # ────────────────── Include directories
 list(APPEND INCLUDES ${Boost_INCLUDE_DIRS} ${LIBXML2_INCLUDE_DIRS} ${EVSPEC_INCLUDE_DIRS} ${PostgreSQL_INCLUDE_DIRS})
 list(APPEND INCLUDES ${HIREDIS_INCLUDE_DIRS})
@@ -85,12 +86,41 @@ list(APPEND INCLUDES ${UUID_INCLUDE_DIR})
 
 target_include_directories(${WORKER_NAME} 
 PRIVATE ${INCLUDES})
-target_include_directories(${TEST_EXEC_NAME}
-PRIVATE ${INCLUDES})
 target_include_directories(${DAEMON_NAME}
 PRIVATE ${INCLUDES} )
 
 
 target_link_libraries(${WORKER_NAME} ${LIBS} )
-target_link_libraries(${TEST_EXEC_NAME} ${LIBS} )
 target_link_libraries(${DAEMON_NAME}  ${LIBS})
+
+
+
+
+enable_testing()
+
+foreach(specSrc ${SPEC_SRCS})
+  #Extract the filename without an extension (NAME_WE)
+  get_filename_component(testName ${specSrc} NAME_WE)
+
+  #Add compile target
+  add_executable(${testName})
+  target_sources(${testName}
+  PRIVATE
+  ${specSrc}
+  ${SRCS}
+  ${WORKER_SOURCES}
+  )
+  target_compile_definitions(${testName} PRIVATE BOOST_TEST_DYN_LINK)
+  target_include_directories(${testName} 
+  PRIVATE ${INCLUDES})
+  #link to Boost libraries AND your targets and dependencies
+  target_link_libraries(${testName} ${LIBS} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+  set_target_properties(${testName} PROPERTIES CXX_EXTENSIONS OFF)
+  target_compile_features(${testName} PUBLIC cxx_std_20)
+  set_target_properties(${testName} PROPERTIES 
+              RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/testBin)
+  add_test(NAME ${testName} COMMAND ${testName} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endforeach(specSrc)
+  
+
+

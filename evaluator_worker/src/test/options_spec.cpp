@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE ev_worker_spec - option configuration spec
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <filesystem>
 #include "options.h"
 #include "uuid/uuid.h"
@@ -18,9 +18,10 @@ BOOST_AUTO_TEST_CASE(file_parsing_test_daemon) {
   BOOST_TEST(
       vm[evworker::options::REDIS_PORT].as<evworker::options::redis_port_t>() ==
       6379);
-  BOOST_TEST(vm[evworker::options::BASE_PATH].as<std::string>() == "fixtures");
+  BOOST_TEST(vm[evworker::options::SUBMISSION_BASE_PATH].as<std::string>() ==
+             "fixtures/submissions");
   BOOST_TEST(vm[evworker::options::PID_DIRECTORY].as<std::string>() ==
-             "~/run/evworker");
+             "tmp/run/evworker");
 }
 
 BOOST_AUTO_TEST_CASE(option_parsing_test_worker) {
@@ -29,8 +30,8 @@ BOOST_AUTO_TEST_CASE(option_parsing_test_worker) {
   uuid_generate(daemon_uuid);
   char uuid_cstr[UUID_STR_LEN]{0};
   uuid_unparse_lower(daemon_uuid, uuid_cstr);
-  const char* argv[]{"please/ignore/exe/path", "-C",
-                     config_file.c_str(), "--uuid", uuid_cstr};
+  const char* argv[]{"please/ignore/exe/path", "-C", config_file.c_str(),
+                     "--uuid", uuid_cstr};
   evworker::options::variables_map vm;
   vm = evworker::options::parse_options(false, 5, argv);
   BOOST_TEST(vm[evworker::options::NUM_WORKERS]
@@ -41,9 +42,10 @@ BOOST_AUTO_TEST_CASE(option_parsing_test_worker) {
   BOOST_TEST(
       vm[evworker::options::REDIS_PORT].as<evworker::options::redis_port_t>() ==
       6379);
-  BOOST_TEST(vm[evworker::options::BASE_PATH].as<std::string>() == "fixtures");
+  BOOST_TEST(vm[evworker::options::SUITES_BASE_PATH].as<std::string>() ==
+             "fixtures/test_suites");
   BOOST_TEST(vm[evworker::options::PID_DIRECTORY].as<std::string>() ==
-             "~/run/evworker");
+             "tmp/run/evworker");
   BOOST_TEST(vm[evworker::options::PARENT_UUID].as<std::string>() == uuid_cstr);
 }
 

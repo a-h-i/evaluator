@@ -1,7 +1,10 @@
 #include <exception>
 #include <stdexcept>
 #include "redis_ctx.h"
-
+#include <algorithm>
+#include <string>
+#include <cstring>
+#include <iterator>
 //
 // ─── WRAPPER FOR REDIS THAT INSURES RAII
 // ────────────────────────────────────────
@@ -35,4 +38,33 @@ redis_ctx &redis_ctx::operator=(redis_ctx &&other) {
   std::swap(redis_, other.redis_);
   return *this;
 }
+bool reply_t::is_error_reply(std::string *what) const {
+  if (reply_ == nullptr) {
+    // connection error
+
+    return true;
+  } else if (reply_->type == REDIS_REPLY_ERROR) {
+    // server replied with an error reply
+    if (what) {
+      std::copy_n(reply_->str, reply_->len, std::back_inserter(*what));
+    }
+    return true;
+  } else {
+    // no error
+    return false;
+  }
+}
+
+std::unique_ptr<char[]> reply_t::parse_reply() const {
+  std::unique_ptr<char[]> buffer(new char[reply_->len + 1]);
+  buffer[reply_->len] = 0; // ensure null terminated
+  std::memcpy(buffer.get(), reply_->str, reply_->len);
+  return buffer;
+}
+
+std::ostream &operator<<(std::ostream &out, const reply_t &reply) {
+  std::copy_n(reply->str, reply->len, std::ostreambuf_iterator<char>(out));
+  return out;
+}
+
 }  // namespace evworker::redis

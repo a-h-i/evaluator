@@ -20,6 +20,13 @@ make
 Cmake build types `RELEASE`, `DEBUG` and `PROFILE` the default is `DEBUG`. Please only install the `RELEASE` version.
 
 
+# Testing
+execute `make test` in the build directory
+
+## Notes about testing
+Requires that redis and postgresql are running on localhost with default config.
+Also requires:
+  - project with id 1 spec type java 1_8 and subtype JUNIT_4 exists.
 
 # Installing
 after building `cd` into the build directory and run `make install` you may need to be super user/root.

@@ -2,66 +2,91 @@
 #include "options.h"
 #include "worker_ctx.h"
 
+#include <uuid/uuid.h>
 #include <algorithm>
 #include <cstring>
 #include <exception>
-#include <stdexcept>
+#include <iostream>
 #include <iterator>
 #include <sstream>
-#include <uuid/uuid.h>
+#include <stdexcept>
 #include "evspec/evspec.h"
+#include "utils.h"
 
 namespace evworker {
 
-static void process_task(evworker_ctx_t *ctx, const nlohmann::json &message) {
-
-// Fetch submission from DB
+static void process_task(evworker_ctx_t *ctx, const nlohmann::json &message,
+                         const std::string &worker_name) {
+  // Fetch submission from DB
   db::submission_t submission;
-  ctx->find_submission(message["submission_id"], submission);
-// Fetch testsuites from DB
+  if (!ctx->find_submission(message["submission_id"].get<std::uint64_t>(),
+                            submission)) {
+    // Submission is not in DB / could be old task. Report and end.
+    throw std::runtime_error("[WORKER] " + worker_name + " processing " +
+                             message.dump() + " unable to find submission");
+  }
+  // Fetch testsuites from DB
 
   std::vector<db::test_suite_t> suites;
-  ctx->query_testsuites(submission.project_id, suites);
-// Fetch project from DB
+  if (!ctx->query_testsuites(submission.project_id, suites)) {
+    throw std::runtime_error("[WORKER] " + worker_name + " processing " +
+                             message.dump() + " unable to find test suites");
+  }
+  // Fetch project from DB
   db::project_t project;
-  ctx->query_project(submission.project_id, project);
-// Grab files
+
+  if (!ctx->find_project(submission.project_id, project)) {
+    throw std::runtime_error("[WORKER] " + worker_name + " processing " +
+                             message.dump() + " unable to find project");
+  }
+  // Grab files
   evspec::EvaluationContext evaluationContext;
   evaluationContext.specType = project.spec_type();
   evaluationContext.subtype = project.subtype();
-  evaluationContext.srcPath = submission.src_path();
-  std::transform(std::begin(suites), std::end(suites), std::front_inserter(evaluationContext.suites), 
-  [] (const db::test_suite_t &suite) {
-    return suite.get_path();
-  });
-  
-// Run Evaluation
+  evaluationContext.srcPath = submission.get_path(ctx->config);
+  std::transform(std::begin(suites), std::end(suites),
+                 std::front_inserter(evaluationContext.suites),
+                 [&project, ctx](const db::test_suite_t &suite) {
+                   return suite.get_path(project.id, ctx->config);
+                 });
+  // Run Evaluation
   try {
-
-    evspec::Result result = evspec::evaluateSubmission(&evaluationContext, ctx->virt_ctx());
+    evspec::Result result =
+        evspec::evaluateSubmission(&evaluationContext, ctx->virt_ctx());
     ctx->save_result(result, submission, suites);
-  } catch(...) {
-    std::throw_with_nested(std::runtime_error(std::string("process_task helper : error while running evaluation for submission with id ") + submission.id ));
+  } catch (...) {
+    std::throw_with_nested(std::runtime_error(
+        std::string("process_task helper : error while running evaluation for "
+                    "submission with id ") +
+        std::to_string(submission.id)));
   }
 }
 
 static void evworker_ctx_t_deleter(void *ptr) {
   delete reinterpret_cast<evworker_ctx_t *>(ptr);
 }
-Worker::Worker(boost::program_options::variables_map const &vm)
+Worker::Worker(boost::program_options::variables_map const *vm)
     : ctx(new evworker_ctx_t(vm), evworker_ctx_t_deleter) {}
 
 std::size_t Worker::process_queue() {
-  evworker_ctx_t * evworkerCtxPtr = reinterpret_cast<evworker_ctx_t *>(ctx.get());
+  evworker_ctx_t *evworkerCtxPtr =
+      reinterpret_cast<evworker_ctx_t *>(ctx.get());
   std::forward_list<nlohmann::json> tasks;
   std::size_t num_tasks = evworkerCtxPtr->poll_tasks(tasks);
-// TODO: Implement
-for(auto &message : tasks) try {
-  process_task(evworkerCtxPtr, message);
-  evworkerCtxPtr->pop_from_running();
-} catch (std::exception &e) {
-  evworkerCtxPtr->shift_to_error(e.what());
-} 
+  for (auto &message : tasks) try {
+      process_task(evworkerCtxPtr, message, worker_name());
+      evworkerCtxPtr->pop_from_running();
+    } catch (std::exception &e) {
+      evworkerCtxPtr->shift_to_error(e.what());
+      std::cerr << "[WORKER] " << worker_name()
+                << " caught exception while processing queue\n"
+                << e.what() << std::endl;
+      utility::write_backtrace(STDERR_FILENO);
+    }
   return num_tasks;
 }
-} // namespace evworker
+
+std::string Worker::worker_name() {
+  return reinterpret_cast<evworker_ctx_t *>(ctx.get())->worker_id();
+}
+}  // namespace evworker

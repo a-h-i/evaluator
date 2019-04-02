@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "hiredis/hiredis.h"
+#include <memory>
+#include <iostream>
 
 namespace evworker::redis {
 
@@ -25,6 +27,25 @@ class reply_t {
       freeReplyObject(reply_);
     }
   }
+  /**
+   * @brief Returns true if null reply
+   * 
+   * @param what nullptr allowed
+   * @return true 
+   * @return false 
+   */
+  bool is_error_reply(std::string *what) const;
+  /**
+   * @brief Undefined behavior if called on error reply or null reply
+   * 
+   * @return std::unique_ptr<char[]> 
+   */
+  std::unique_ptr<char[]> parse_reply() const;
+
+  inline bool is_string_reply() const {
+    return reply_->type == REDIS_REPLY_STRING;
+  }
+  friend std::ostream &operator<<(std::ostream &out, const reply_t &reply);
 };
 //
 // ──────────────────────────────────────────────────────────────────────────────────────────────────────────────

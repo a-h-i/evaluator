@@ -59,7 +59,8 @@ variables_map parse_options(bool is_daemon, int argc, const char** argv) {
       REDIS_DB, value<redis_db_t>()->required(), "redis database")(
       REDIS_HOST, value<redis_host_t>()->required(), "redis host address")(
       REDIS_PORT, value<redis_port_t>()->required(), "redis port number")(
-      BASE_PATH, value<std::string>()->required(), "evaluator data directory")(
+      SUBMISSION_BASE_PATH, value<std::string>()->required(), "evaluator submissions data directory")(
+      SUITES_BASE_PATH, value<std::string>()->required(), "evaluator test suite data directory")(
       DB_HOST, value<std::string>()->required(), "database host")(
       DB_PORT, value<db_port_t>()->required(), "database port")(
       DB_NAME, value<std::string>()->required(), "database name")(
