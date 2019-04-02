@@ -5,7 +5,8 @@ class Api::UsersController < ApplicationController
   before_action :authorize_teacher, only: [:index]
   before_action :authorize, only: [:index, :show, :update]
   after_action :no_cache, except: [:index, :show]
-  after_action :send_verification, only: [:create]
+  after_action :send_verification, only: [:create, :resend_verify]
+  before_action :raise_if_verified, only: [:resend_verify]
   skip_before_action :set_resource, only: [:reset_password, :resend_verify, :confirm_reset, :verify]
   # Requests a password reset
   def reset_password
@@ -55,7 +56,14 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def resend_verify
+  end
+
   private
+
+  def raise_if_verified
+    raise ActionController::BadRequest if @user.verified?
+  end
 
   def query_params
     params.permit(:student, :super_user, :name, :email, :guc_suffix,

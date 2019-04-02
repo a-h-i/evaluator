@@ -11,6 +11,7 @@ module Rescuer
     rescue_from ActiveRecord::RecordNotFound, with: :not_found
     rescue_from CaptchaError, with: :too_many_requests
     rescue_from ActiveRecord::NotNullViolation, with: :bad_request_response
+    rescue_from ActionController::BadRequest, with: :bad_request_response
   end
 
   protected

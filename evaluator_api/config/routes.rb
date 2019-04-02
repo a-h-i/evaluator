@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     resources :users, param: :email, only: [] do
       member do
         get :reset_password, action: :reset_password
+        get :resend_verify, action: :resend_verify
       end
     end
     resources :users, except: [:new] do

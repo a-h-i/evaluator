@@ -281,19 +281,38 @@ RSpec.describe Api::UsersController, type: :controller do
     end
   end
 
-  context '.verify' do
+  context ".verify" do
     let(:user) { FactoryBot.create(:teacher, verified: false) }
-    it 'accepts verification token' do
+    it "accepts verification token" do
       token = user.gen_email_verification_token
-      put :verify, params: { token: token}
+      put :verify, params: { token: token }
       user.reload
       expect(user.verified).to be true
     end
-    it 'rejects invalid tokens' do
-      token = FactoryBot.create(:teacher).gen_email_verification_token
-      put :verify, params: {token: token}
-      user.reload
-      expect(user.verified).to be false
+    it "rejects invalid tokens" do
+      other = FactoryBot.create(:teacher, verified: false)
+      token = other.gen_email_verification_token + "2"
+      put :verify, params: { token: token }
+      other.reload
+      expect(other.verified).to be false
+    end
+  end
+
+  context ".resend_verify" do
+    let(:user) { FactoryBot.create(:teacher, verified: false) }
+    it "does not resend to verified users" do
+      allow(MessagingService).to receive(:send_verification_email)
+      user.verified = true
+      user.save!
+      get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
+      expect(response).to be_bad_request
+      expect(MessagingService).not_to have_received(:send_verification_email)
+    end
+    it "sends email" do
+      allow(MessagingService).to receive(:send_verification_email)
+      get :resend_verify, params: {email: Base64.urlsafe_encode64(user.email)}
+      expect(response).to be_successful
+      expect(MessagingService).to have_received(:send_verification_email)
     end
   end
 

@@ -11,4 +11,9 @@ class UserMailer < ApplicationMailer
          cc: 'ahm3d.hisham@gmail.com',
          subject: 'Issue reported')
   end
+
+  def verification_email(email, token)
+    @token = token
+    mail(to: email, subject: 'Verify Account')
+  end
 end

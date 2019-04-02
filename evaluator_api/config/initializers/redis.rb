@@ -1,6 +1,7 @@
 
 
 Rails.application.configure do
+  config.evaluator_message_queue = 'evaluator_jobs'
   config.action_controller.perform_caching = false
   config.create_redis_connections = Proc.new do |config|
     config.redis = Redis.new(driver: :hiredis, host: ENV.fetch("EVALUATOR_REDIS_CACHE_HOST", "localhost"),
@@ -12,11 +13,11 @@ Rails.application.configure do
                   inherit_socket: true)
     config.cache_store = :redis_cache_store, {redis: config.redis, compress: true, compress_threshold: 1.kilobytes}
     Sidekiq.configure_server do |sq|
-      sq.redis = ConnectionPool.new(size: 5) {config.messaging_redis}
+      sq.redis = ConnectionPool.new(size: 10) {config.messaging_redis}
     end
     
     Sidekiq.configure_client do |sq|
-      sq.redis = ConnectionPool.new(size: 5) {config.messaging_redis}
+      sq.redis = ConnectionPool.new(size: 10) {config.messaging_redis}
     end  
   end
   config.create_redis_connections.call(config)
