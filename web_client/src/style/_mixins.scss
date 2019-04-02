@@ -1,0 +1,132 @@
+@mixin columns($num_colums, $col_gap:normal) {
+  column-count: $num_colums;
+  column-gap: $col_gap;
+}
+
+@mixin noise($background-color:"") {
+  background: url('images/noisy-texture-50x50-o4-d10-c-f34379-t1.png'), unquote($background-color);
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+}
+
+// Maintains aspect ration
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  &:before {
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: ($height / $width) * 100%;
+  }
+  > .content {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+}
+
+
+// Generates uniqueid one time animations
+@mixin animation($args...) {
+  $name: unique-id(); // name for @keyframes
+  $args: join((), $args, 'space'); // conform args as SSV
+  animation: $name + ' ' + $args;
+  @keyframes #{$name} {
+    @content;
+  }
+}
+
+@mixin anim($args...) { @include animation($args...) { @content; } }
+
+@mixin display-flex() {
+  // 2009
+  display: box;
+  //2013
+  display: flex;
+}
+
+@mixin justify-content($method) {
+  //2009
+  @if $method == 'flex-start' {
+    box-pack: start;
+  } @else if $method == 'center' {
+    box-pack: center;
+  } @else if $method == 'flex-end' {
+    box-pack: end;
+  } @else if $method == 'space-between' {
+    box-pack: justify;
+  } @else if $method == 'space-around' {
+    -ms-flex-pack: distribute;
+    box-pack: distribute;
+  }
+  //2013
+  justify-content: $method
+}
+
+@mixin flex-direction($direction) {
+  @if $direction == 'row' {
+    box-orient: horizontal;
+  } @else if $direction == 'row-reverse' {
+    box-orient: horizontal;
+    box-direction: reverse;
+  } @else if $direction == 'column' {
+    box-orient: vertical;
+  } @else if $direction == 'column-reverse' {
+    box-orient: vertical;
+    box-direction: reverse;
+  }
+  // 2013
+  flex-direction: $direction;
+}
+
+@mixin flex-wrap($wrap) {
+  @if $wrap == 'wrap' {
+    box-lines: multiple;
+  } @else if $wrap == 'wrap-reverse' {
+    box-lines: multiple;
+    box-direction: reverse;
+  } @else if $wrap == 'nowrap' {
+    box-lines: single;
+  }
+  // 2013
+  flex-wrap: $wrap;
+}
+
+@mixin flex-flow($direction, $wrap) {
+  @include flex-wrap($wrap);
+  @include flex-direction($direction);
+}
+
+@mixin align-items($method) {
+  @if $method == 'flex-start' {
+    box-align: start;
+  } @else if $method == 'flex-end' {
+    box-align: end;
+  } @else {
+    box-align: $method; // center, baseline, stretch
+  }
+
+  // 2013
+  align-items: $method;
+}
+
+
+
+@function makelongshadow($color) {
+  $val: 0px 0px $color;
+  @for $i from 1 through $shadowlength {
+    $val: #{$val}, #{$i}px #{$i}px #{$color};
+  }
+  @return $val;
+}
+
+@mixin longshadow($color) {
+  text-shadow: makelongshadow($color);
+}
