@@ -28,6 +28,18 @@ RSpec.describe StudentCourseRegistration, type: :model do
     end
   end
 
+  describe 'team propagation', focus: true do
+    let(:submission) {FactoryBot.create(:submission)}
+
+    it 'sets team' do
+      expect(submission.team).to be_nil
+      submission.course.unregister submission.submitter
+      submission.course.register submission.submitter, 'test team please ignore'
+      submission.reload
+      expect(submission.team).to eql 'test team please ignore'
+    end
+  end
+
 
   describe 'course students' do
     context 'create joins' do
@@ -54,7 +66,7 @@ RSpec.describe StudentCourseRegistration, type: :model do
   end
 
   describe 'student courses' do
-    context 'create joints' do
+    context 'create joins' do
       let(:student) { FactoryBot.create(:student) }
       let(:courses) { FactoryBot.create_list(:course, 5) }
       it 'should be accessible from the other side' do

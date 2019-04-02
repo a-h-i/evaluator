@@ -29,12 +29,11 @@ class Course < ApplicationRecord
   scope :published, -> { where published: true }
   
   def register(student, team = nil)
-    if team.nil?
-      students << student
+    if StudentCourseRegistration.exists?(course: self, student: student)
+      StudentCourseRegistration.where(course: self, student: student).update_all(team: team)
     else
       StudentCourseRegistration.create(course: self, student: student, team: team)
     end
-
   end
   def unregister(student)
     students.delete student
