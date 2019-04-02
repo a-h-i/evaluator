@@ -12,5 +12,13 @@ namespace :submissions do
       FileUtils.mv old_path, new_path
     end
   end
+  desc 'Queues a culling job for all students'
+  task cull: :environment do
+    Course.all.each do |course|
+      course.students.each do |student|
+        course.projects.each {|p| MessagingService.queue_submission_cul_job(student, p)}
+      end
+    end
+  end
 
 end
