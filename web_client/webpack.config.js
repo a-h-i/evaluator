@@ -4,6 +4,9 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const SystemBellPlugin = require('system-bell-webpack-plugin');
+const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
+const { CheckerPlugin } = require('awesome-typescript-loader')
+const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const path = require('path');
 
 
@@ -23,7 +26,9 @@ const isProduction = nodeEnv === 'production';
 let conf = {
   context: path.resolve(__dirname, './src'),
   entry: {
-    app: './main.js'
+    app: './main.ts',
+    polyfills: './polyfills.ts',
+    vendor: './vendor.ts'
   },
   output: {
     path: path.resolve(__dirname, './dist'),
@@ -52,8 +57,16 @@ conf.optimization = {
 conf.mode = isProduction ? 'production' : 'development';
 conf.resolve = {
   modules: ['node_modules'],
-  extensions: ['.js']
+  extensions: ['.js', '.ts'],
+  plugins: [
+    new TsConfigPathsPlugin({
+      configFile: './tsconfig.json',
+    })
+  ]
 };
+
+
+
 //
 // ─── CONFIGURE PLUGINS ──────────────────────────────────────────────────────────
 //
@@ -68,6 +81,12 @@ conf.plugins.push(new HtmlWebpackPlugin({
     children: false
   }
 }));
+
+conf.plugins.push(new webpack.ContextReplacementPlugin(
+  /@angular(\\|\/)core(\\|\/)fesm5/,
+  path.resolve(__dirname, './src'),
+  {}
+))
 
 conf.plugins.push(new MiniCssExtractPlugin({
   filename: "[name]-[contenthash].css",
@@ -84,6 +103,20 @@ conf.plugins.push(new DashboardPlugin({
 }));
 
 conf.plugins.push(new SystemBellPlugin());
+
+conf.plugins.push(new CheckerPlugin());
+
+conf.plugins.push(new FilterWarningsPlugin({
+  exclude: /System.import/
+}));
+
+conf.plugins.push(new webpack.EnvironmentPlugin({
+  DEBUG: false,
+  IS_PRODUCTION: isProduction,
+  NODE_ENV: 'development'
+}))
+
+
 //
 // ─── CONFIGURE LOADERS ──────────────────────────────────────────────────────────
 //
@@ -122,6 +155,21 @@ let jsModule = {
   }]
 };
 
+let tsModule = {
+  test: /\.ts$/,
+  use: ['awesome-typescript-loader', 'angular2-template-loader', {
+    loader: 'tslint-loader',
+    options: {
+      configFile: 'tslint.json',
+      tsConfigFile: 'tsconfig.json',
+      emitWarning: false,
+      emitError: false,
+      failOnWarning: false,
+      failOnError: false
+    }
+  }]
+};
+
 let htmlLoader = {
   test: /\.html$/,
   use: [{
@@ -133,7 +181,7 @@ let htmlLoader = {
 };
 
 
-
+conf.module.rules.push(tsModule);
 conf.module.rules.push(jsModule);
 conf.module.rules.push(htmlLoader);
 conf.module.rules.push(styleModule);
@@ -144,6 +192,7 @@ conf.module.rules.push(styleModule);
 //
 
   conf.devServer = {
+    historyApiFallback: true,
     overlay: {
       errors: true,
       warnings: true,

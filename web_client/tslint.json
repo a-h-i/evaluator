@@ -1,0 +1,8 @@
+{
+  "extends": ["tslint:recommended", "tslint-angular"],
+  "rules": {  
+    "eofline": false,
+    "ordered-imports": false,
+    "no-var-requires": false
+  }
+}
