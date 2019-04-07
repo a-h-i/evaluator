@@ -1,7 +1,7 @@
 #include "worker.h"
 #include "options.h"
 #include "worker_ctx.h"
-
+#include "messaging/types.h"
 #include <uuid/uuid.h>
 #include <algorithm>
 #include <cstring>
@@ -15,29 +15,29 @@
 
 namespace evworker {
 
-static void process_task(evworker_ctx_t *ctx, const nlohmann::json &message,
+static void process_task(evworker_ctx_t *ctx, const routing::evaluation_message_t &message,
                          const std::string &worker_name) {
   // Fetch submission from DB
   db::submission_t submission;
-  if (!ctx->find_submission(message["submission_id"].get<std::uint64_t>(),
+  if (!ctx->find_submission(message.submission_id,
                             submission)) {
     // Submission is not in DB / could be old task. Report and end.
     throw std::runtime_error("[WORKER] " + worker_name + " processing " +
-                             message.dump() + " unable to find submission");
+                             message.to_string() + " unable to find submission");
   }
   // Fetch testsuites from DB
 
   std::vector<db::test_suite_t> suites;
   if (!ctx->query_testsuites(submission.project_id, suites)) {
     throw std::runtime_error("[WORKER] " + worker_name + " processing " +
-                             message.dump() + " unable to find test suites");
+                             message.to_string() + " unable to find test suites");
   }
   // Fetch project from DB
   db::project_t project;
 
   if (!ctx->find_project(submission.project_id, project)) {
     throw std::runtime_error("[WORKER] " + worker_name + " processing " +
-                             message.dump() + " unable to find project");
+                             message.to_string() + " unable to find project");
   }
   // Grab files
   evspec::EvaluationContext evaluationContext;
@@ -47,7 +47,7 @@ static void process_task(evworker_ctx_t *ctx, const nlohmann::json &message,
   std::transform(std::begin(suites), std::end(suites),
                  std::front_inserter(evaluationContext.suites),
                  [&project, ctx](const db::test_suite_t &suite) {
-                   return suite.get_path(project.id, ctx->config);
+                   return suite.get_path(ctx->config);
                  });
   // Run Evaluation
   try {
@@ -71,7 +71,7 @@ Worker::Worker(boost::program_options::variables_map const *vm)
 std::size_t Worker::process_queue() {
   evworker_ctx_t *evworkerCtxPtr =
       reinterpret_cast<evworker_ctx_t *>(ctx.get());
-  std::forward_list<nlohmann::json> tasks;
+  std::forward_list<routing::evaluation_message_t> tasks;
   std::size_t num_tasks = evworkerCtxPtr->poll_tasks(tasks);
   for (auto &message : tasks) try {
       process_task(evworkerCtxPtr, message, worker_name());

@@ -1,5 +1,6 @@
 #include "json.hpp"
-#include "message_types.h"
+#include "messaging/message.h"
+#include "messaging/types.h"
 #include "worker_ctx.h"
 #include <memory>
 #include <iostream>
@@ -19,24 +20,14 @@ constexpr unsigned int QUEUE_POLL_TIMEOUT = 10u;
 
 
 void evworker_ctx_t::notify_mq_server_ready() {
-  // send msg to ctrl queue
-  nlohmann::json message = {
-      {MetaFieldType::MESSAGE_TYPE, MessageType::WORKER_UP},
-      {MetaFieldType::WORKER_TASKS_PENDING_QUEUE_NAME,
-       redis_pending_task_queue_name},
-      {MetaFieldType::WORKER_TASKS_RUNNING_QUEUE_NAME,
-       redis_running_task_queue_name},
-      {MetaFieldType::WORKER_TASKS_ERROR_QUEUE_NAME,
-       redis_error_task_queue_name},
-      {MetaFieldType::WORKER_NAME, worker_name}};
-
-  std::string serialized = message.dump();
-  redis::reply_t reply = redis.command("LPUSH %s", serialized.c_str());
+  std::string message = routing::generate_worker_up_message(worker_name,
+  redis_pending_task_queue_name, redis_running_task_queue_name, redis_error_task_queue_name);
+  redis::reply_t reply = redis.command("LPUSH %s", message.c_str());
   throw_if_redis_error(reply);
 }
 
 
-std::size_t evworker_ctx_t::poll_tasks(std::forward_list<nlohmann::json> &tasks) {
+std::size_t evworker_ctx_t::poll_tasks(std::forward_list<routing::evaluation_message_t> &tasks) {
   std::size_t len = 0;
   do {
   redis::reply_t reply = redis.command("BRPOPLPUSH %s %s %i", redis_pending_task_queue_name.c_str(), 
@@ -49,8 +40,8 @@ std::size_t evworker_ctx_t::poll_tasks(std::forward_list<nlohmann::json> &tasks)
   if(!reply.is_string_reply()) {
     throw std::runtime_error("evworker_ctx_t::poll_tasks : unknown redis reply type");
   }
-    std::unique_ptr<char[]> buff = reply.parse_reply();
-    tasks.emplace_front(nlohmann::json::parse(buff.get()));
+    std::vector<char> buff = reply.parse_reply();
+    tasks.emplace_front(routing::parse_evaluation_message(buff.data()));
   } while( ++len < 5 );
   return len;
 }

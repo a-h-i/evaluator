@@ -8,7 +8,7 @@ namespace evworker::db {
 fs::path submission_t::get_path(
     const boost::program_options::variables_map *config) const {
   fs::path path(config->at(options::SUBMISSION_BASE_PATH).as<std::string>());
-  path /= std::to_string(id) + formatted_created_at;
+  path /= std::to_string(id) + "_" + formatted_created_at;
   path += fs::path(file_name).extension();
   return path;
 }

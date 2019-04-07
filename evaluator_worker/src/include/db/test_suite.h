@@ -13,7 +13,10 @@ struct test_suite_t {
   int timeout;
   bool hidden;
   boost::filesystem::path get_path(
-      std::uint64_t project_id,
       const boost::program_options::variables_map* config) const;
+  
+  std::string package_name() const {
+    return detail.at("package_name").get<std::string>();
+  }
 };
 }  // namespace evworker::db

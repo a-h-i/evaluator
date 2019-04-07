@@ -1,8 +1,9 @@
 #pragma once
-#include <string>
 #include "hiredis/hiredis.h"
-#include <memory>
-#include <iostream>
+#include <string>
+#include <vector>
+#include <ostream>
+
 
 namespace evworker::redis {
 
@@ -25,6 +26,7 @@ class reply_t {
   inline ~reply_t() {
     if (reply_) {
       freeReplyObject(reply_);
+      reply_ = nullptr;
     }
   }
   /**
@@ -38,16 +40,19 @@ class reply_t {
   /**
    * @brief Undefined behavior if called on error reply or null reply
    * 
-   * @return std::unique_ptr<char[]> 
+   * @return std::vector<char> 
    */
-  std::unique_ptr<char[]> parse_reply() const;
-
+  std::vector<char> parse_reply() const;
+  void parse_reply(char *out) const;
+  inline int reply_len() const {return reply_->len;} 
   inline bool is_string_reply() const {
     return reply_->type == REDIS_REPLY_STRING;
   }
   friend std::ostream &operator<<(std::ostream &out, const reply_t &reply);
 };
-//
+
+
+
 // ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
 // I ──────────
 //   :::::: S I M P L E   P R O X Y   C L A S S   F O R   R E D I S C O N T E X
@@ -77,4 +82,4 @@ class redis_ctx {
     return reinterpret_cast<redisReply *>(redisCommand(redis_, args...));
   }
 };
-}  // namespace evworker::redis
+}

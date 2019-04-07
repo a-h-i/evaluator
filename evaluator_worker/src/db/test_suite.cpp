@@ -5,7 +5,6 @@
 
 namespace evworker::db {
 fs::path test_suite_t::get_path(
-    std::uint64_t project_id,
     const boost::program_options::variables_map *config) const {
   fs::path path(config->at(options::SUITES_BASE_PATH).as<std::string>());
   path /= std::to_string(project_id) + "_" + std::to_string(id);
@@ -54,9 +53,9 @@ bool pg_ctx::find_testsuite(std::uint64_t id, test_suite_t &test_suite) {
   int param_lengths[]{sizeof(id_network_order)};
   int param_formats[]{1};
   pg_result_t result =
-      PQexecParams(conn_, TEST_SUITES_FIND_QUERY.c_str(), 1, nullptr, param_values,
-                   param_lengths, param_formats, 1);
-  if ((result == PGRES_TUPLES_OK )&& (PQntuples(result)) == 1) {
+      PQexecParams(conn_, TEST_SUITES_FIND_QUERY.c_str(), 1, nullptr,
+                   param_values, param_lengths, param_formats, 1);
+  if ((result == PGRES_TUPLES_OK) && (PQntuples(result)) == 1) {
     parse(test_suite, result);
     return true;
 
@@ -73,10 +72,16 @@ bool pg_ctx::find_testsuites(std::uint64_t project_id,
   pg_result_t result =
       PQexecParams(conn_, TEST_SUITES_QUERY.c_str(), 1, nullptr, param_values,
                    param_lengths, param_formats, 1);
-  int num_tuples = PQntuples(result);
-  if (result == PGRES_TUPLES_OK && num_tuples > 0) {
-    std::size_t vec_offset = suites.size() - 1;
-    suites.resize(vec_offset + num_tuples + 1);
+  if (result == PGRES_TUPLES_OK) {
+    int num_tuples = PQntuples(result);
+    if(num_tuples < 1) {
+      return false;
+    }
+    std::size_t vec_offset = suites.size();
+    if (vec_offset > 0) {
+      vec_offset -= 1;
+    }
+    suites.resize(suites.size() + num_tuples);
     for (int tuple_index = 0; tuple_index < num_tuples; tuple_index++) {
       parse(suites[tuple_index + vec_offset], result, tuple_index);
     }

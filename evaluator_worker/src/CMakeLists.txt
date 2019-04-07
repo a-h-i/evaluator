@@ -9,18 +9,32 @@ list(APPEND SRCS src/options/parse_options.cpp)
 list(APPEND SRCS src/options/options_config.cpp)
 list(APPEND SRCS src/signals/atomic_globals.cpp)
 list(APPEND SRCS fixtures/sample_config.ini)
+
+# ────────────────── MESSAGE INTERFACE ──────────────────
+list(APPEND MESSAGE_INTERFACE src/messaging/message_generation.cpp)
+list(APPEND MESSAGE_INTERFACE src/messaging/message_parsing.cpp)
+list(APPEND MESSAGE_INTERFACE src/messaging/types.cpp)
+
+
+
+# ────────────────── PG Sources ──────────────────
+list(APPEND PG_SOURCES src/db/pg.cpp)
+list(APPEND PG_SOURCES src/db/submission.cpp)
+list(APPEND PG_SOURCES src/db/test_suite.cpp)
+list(APPEND PG_SOURCES src/db/helpers.cpp)
+list(APPEND PG_SOURCES src/db/project.cpp)
+
+# ────────────────── Redis Sources ──────────────────
+
+list(APPEND REDIS_SOURCES src/redis/reply.cpp)
+list(APPEND REDIS_SOURCES src/redis/redis.cpp)
+
 # ────────────────── Worker Sources ──────────────────
 
-
 list(APPEND WORKER_SOURCES src/worker/worker.cpp)
-list(APPEND WORKER_SOURCES src/worker/redis.cpp)
 list(APPEND WORKER_SOURCES src/worker/worker_ctx_raii.cpp)
 list(APPEND WORKER_SOURCES src/worker/worker_ctx_redis.cpp)
-list(APPEND WORKER_SOURCES src/db/pg.cpp)
-list(APPEND WORKER_SOURCES src/db/submission.cpp)
-list(APPEND WORKER_SOURCES src/db/test_suite.cpp)
-list(APPEND WORKER_SOURCES src/db/helpers.cpp)
-list(APPEND WORKER_SOURCES src/db/project.cpp)
+
 
 # ────────────────── Daemon Sources ──────────────────
 
@@ -38,6 +52,9 @@ target_sources(${WORKER_NAME}
   PRIVATE
   ${SRCS}
   ${WORKER_SOURCES}
+  ${REDIS_SOURCES}
+  ${PG_SOURCES}
+  ${MESSAGE_INTERFACE}
   src/worker_main.cpp
 )
 
@@ -68,9 +85,9 @@ find_package(Uuid REQUIRED)
 
 # ────────────────── Linked Libraries
 list(APPEND LIBS ${Boost_REGEX_LIBRARY} ${LIBXML2_LIBRARIES} ${EVSPEC_LIBRARIES} Threads::Threads)
-list(APPEND LIBS ${PostgreSQL_LIBRARIES})
+list(APPEND PG_LIBS ${PostgreSQL_LIBRARIES})
 list(APPEND LIBS ${Boost_SYSTEM_LIBRARY})
-list(APPEND LIBS ${HIREDIS_LIBRARIES})
+list(APPEND REDIS_LIBS ${HIREDIS_LIBRARIES})
 list(APPEND LIBS ${Boost_PROGRAM_OPTIONS_LIBRARY})
 list(APPEND LIBS ${UUID_LIBRARY})
 list(APPEND LIBS -lstdc++fs)
@@ -90,8 +107,8 @@ target_include_directories(${DAEMON_NAME}
 PRIVATE ${INCLUDES} )
 
 
-target_link_libraries(${WORKER_NAME} ${LIBS} )
-target_link_libraries(${DAEMON_NAME}  ${LIBS})
+target_link_libraries(${WORKER_NAME} ${LIBS} ${REDIS_LIBS} ${PG_LIBS})
+target_link_libraries(${DAEMON_NAME}  ${LIBS} )
 
 
 
@@ -109,12 +126,15 @@ foreach(specSrc ${SPEC_SRCS})
   ${specSrc}
   ${SRCS}
   ${WORKER_SOURCES}
+  ${REDIS_SOURCES}
+  ${PG_SOURCES}
+  ${MESSAGE_INTERFACE}
   )
   target_compile_definitions(${testName} PRIVATE BOOST_TEST_DYN_LINK)
   target_include_directories(${testName} 
   PRIVATE ${INCLUDES})
   #link to Boost libraries AND your targets and dependencies
-  target_link_libraries(${testName} ${LIBS} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+  target_link_libraries(${testName} ${LIBS} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} ${REDIS_LIBS} ${PG_LIBS})
   set_target_properties(${testName} PROPERTIES CXX_EXTENSIONS OFF)
   target_compile_features(${testName} PUBLIC cxx_std_20)
   set_target_properties(${testName} PROPERTIES 

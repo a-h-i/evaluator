@@ -3,10 +3,11 @@
 #include <string>
 #include <vector>
 #include "boost/program_options/variables_map.hpp"
+#include "db/types.h"
 #include "evspec/evspec.h"
 #include "json.hpp"
-#include "db/types.h"
-#include "redis_ctx.h"
+#include "messaging/types.h"
+#include "redis/redis.h"
 #include "worker.h"
 namespace evworker {
 
@@ -41,7 +42,15 @@ class evworker_ctx_t {
       throw std::runtime_error("evworker_ctx_t redis error : " + what);
     }
   }
-  std::size_t poll_tasks(std::forward_list<nlohmann::json> &tasks);
+  /**
+   * @brief pops right most entry in pending task queue , pushes it from the left into running queue
+   * atomically.
+   * Parses retrieved tasks and places them in the back of tasks parameter.
+   * @param tasks
+   * @return std::size_t  number of tasks retrieved
+   */
+  std::size_t poll_tasks(
+      std::forward_list<routing::evaluation_message_t> &tasks);
   inline bool find_submission(std::uint64_t id, db::submission_t &submission) {
     return pg.find_submission(id, submission);
   }
@@ -52,7 +61,15 @@ class evworker_ctx_t {
   inline bool find_project(std::uint64_t project_id, db::project_t &project) {
     return pg.find_project(project_id, project);
   }
+  /**
+   * @brief Removes right most element from running task queue
+   * 
+   */
   void pop_from_running();
+  /**
+   * @brief Shifts right most element from running task queue to error queue
+   * 
+   */
   void shift_to_error(const std::string &);
   inline evspec::VirtualizationContext *virt_ctx() const { return virtCtxt; }
   inline std::string worker_id() { return worker_name; }

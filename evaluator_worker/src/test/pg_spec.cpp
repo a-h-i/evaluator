@@ -69,5 +69,38 @@ BOOST_AUTO_TEST_CASE(non_existant_submission) {
 }
 
 
+BOOST_AUTO_TEST_CASE(find_test_suite) {
+  test_suite_t suite;
+  BOOST_TEST(pg.find_testsuite(1, suite));
+  BOOST_TEST(suite.name == "public_suite");
+  BOOST_TEST(suite.hidden == true);
+  BOOST_TEST(suite.timeout == 60);
+  BOOST_TEST(suite.file_name == "M1PrivateTest.zip");
+  BOOST_TEST(suite.package_name() == "public");
+}
+
+BOOST_AUTO_TEST_CASE(find_non_existant_suite) {
+  test_suite_t suite;
+  BOOST_TEST(!pg.find_testsuite(512, suite));
+}
+
+BOOST_AUTO_TEST_CASE(list_suites) {
+  std::vector<test_suite_t> suites;
+  BOOST_TEST(pg.find_testsuites(1, suites));
+  BOOST_TEST(suites.size() == 2);
+}
+
+BOOST_AUTO_TEST_CASE(list_non_existant_project_suites) {
+  std::vector<test_suite_t> suites;
+  BOOST_TEST(!pg.find_testsuites(512, suites));
+  BOOST_TEST(suites.size() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(list_project_without_suites_suites) {
+  std::vector<test_suite_t> suites;
+  BOOST_TEST(!pg.find_testsuites(2, suites));
+  BOOST_TEST(suites.size() == 0);
+
+}
 
 BOOST_AUTO_TEST_SUITE_END()

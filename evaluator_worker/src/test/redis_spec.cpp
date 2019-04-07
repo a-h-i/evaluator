@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE redis_ctx spec - redis functions spec
 #include <boost/test/unit_test.hpp>
-#include "redis_ctx.h"
+#include "redis/redis.h"
 using namespace evworker::redis;
 BOOST_AUTO_TEST_SUITE(redis_tests)
 
