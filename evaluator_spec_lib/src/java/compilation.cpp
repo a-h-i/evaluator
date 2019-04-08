@@ -1,8 +1,8 @@
 #include "internal/java.h"
 #include "process.h"
 #include <algorithm>
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <boost/iostreams/stream.hpp>
+#include "boost/iostreams/device/file_descriptor.hpp"
+#include "boost/iostreams/stream.hpp"
 #include <exception>
 #include <forward_list>
 #include <iostream>

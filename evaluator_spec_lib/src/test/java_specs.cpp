@@ -2,7 +2,7 @@
 #include "evspec.h"
 #include <algorithm>
 #include <boost/filesystem.hpp>
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 #include <forward_list>
 #include <iterator>
 #include <libxml2/libxml/parser.h>

@@ -75,7 +75,7 @@ static const boost::regex varsRegex(R"REGEX((\$\{JDK_VERSION\})|(\$\{JUNIT_VERSI
 
 static std::string getJDKVersionSTR(const evspec::SpecType &specType) {
   // default is 1.8
-  switch (specType) {
+  switch (specType.value) {
   case evspec::SpecType::JAVA_1_8:
   default:
     return "1.8";

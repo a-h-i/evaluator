@@ -25,6 +25,7 @@ struct LibXmlRaii {
  */
 extern void (*const exitHandler)();
 extern void (*const abortHandler)(int);
-constexpr uint8_t version_major = VERSION_MAJOR;
-constexpr uint8_t version_minor = VERSION_MINOR;
+
+VirtualizationContext make_lxc_context(const std::string &container_name, const std::string &ssh_key_path);
+void delete_context(VirtualizationContext ctx);
 } // namespace EVSPEC_APIevspec

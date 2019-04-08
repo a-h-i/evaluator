@@ -17,12 +17,20 @@ std::cerr << "evspec::Spec::~Spec: exception caught during destruction "
   }
 }
 
-boost::filesystem::path createTempDirectory() {
-  fs::path tempDirPath = boost::filesystem::temp_directory_path();
+inline boost::filesystem::path createTempDirectory() {
+  boost::filesystem::path tempDirPath = boost::filesystem::temp_directory_path();
   boost::filesystem::path path = tempDirPath / boost::filesystem::unique_path();
   boost::filesystem::create_directories(path);
   return path;
 }
 
+template<class Obj, class Func , Func f>
+struct apply_wrapper_t {
+  Obj obj_;
+  apply_wrapper_t(Obj obj) : obj_(obj) {};
+  ~apply_wrapper_t() {
+    f(obj_);
+  }
+};
 
 } // namespace utility

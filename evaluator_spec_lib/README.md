@@ -3,7 +3,7 @@
 # Dependencies
 ```bash
 dnf update -y
-dnf install -y boost boost-devel git make gcc cmake autoconf gcc-c++ openssl curl firewalld vim readline-devel libxml2 libxml2-devel tbb tbb-devel
+dnf install -y boost boost-devel git make gcc cmake autoconf gcc-c++ openssl curl firewalld vim readline-devel libxml2 libxml2-devel tbb tbb-devel libssh-devel
 dnf install -y atool unzip lzma lzop lzip unrar lha p7zip 
 
 ```

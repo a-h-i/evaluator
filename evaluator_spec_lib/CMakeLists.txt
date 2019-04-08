@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 # Define version and project
-project(evspec VERSION 2.0 LANGUAGES CXX
+project(evspec VERSION 3.0 LANGUAGES CXX
 DESCRIPTION  "Evaluator Library for running projects."
 )
 add_compile_definitions(VERSION_MAJOR=${PROJECT_VERSION_MAJOR})
@@ -9,7 +9,6 @@ include(GNUInstallDirs)
 
 # Target names
 set(EXECUTABLE_NAME "evSpecEx")
-set(TEST_EXEC_NAME "evSpecSpecs")
 set(LIBRARY_NAME ${PROJECT_NAME})
 set(PACKAGE_NAME "Evspec")
 
@@ -74,7 +73,6 @@ MARK_AS_ADVANCED(
 # Define targets
 
 add_executable(${EXECUTABLE_NAME} "")
-add_executable(${TEST_EXEC_NAME} "")
 add_library(${LIBRARY_NAME} SHARED "")
 target_compile_definitions(${LIBRARY_NAME} PUBLIC EVSPEC_DLL)
 target_compile_definitions(${LIBRARY_NAME} PRIVATE EVSPEC_DLL_EXPORTS)
@@ -153,10 +151,8 @@ install(FILES ${CMAKE_SOURCE_DIR}/resources/surefire-test-report-3.0.xsd
 # Configure compiler
 
 target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_20)
-target_compile_features(${TEST_EXEC_NAME} PUBLIC cxx_std_20)
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_20)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-set_target_properties(${TEST_EXEC_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${LIBRARY_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 
 
