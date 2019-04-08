@@ -152,6 +152,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/resources/surefire-test-report-3.0.xsd
 
 target_compile_features(${EXECUTABLE_NAME} PUBLIC cxx_std_20)
 target_compile_features(${LIBRARY_NAME} PUBLIC cxx_std_20)
+
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(${LIBRARY_NAME} PROPERTIES CXX_EXTENSIONS OFF)
 

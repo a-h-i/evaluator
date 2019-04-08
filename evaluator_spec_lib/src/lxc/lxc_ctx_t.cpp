@@ -13,8 +13,8 @@ namespace evspec::lxc {
 // NAME                STATE   AUTOSTART GROUPS IPV4       IPV6 UNPRIVILEGED
 // evaluator_container RUNNING 1         -      10.0.3.226 -    false
 
-static std::string get_container_ip([
-    [maybe_unused]] const std::string &container_name) {
+static std::string get_container_ip(
+    const std::string &container_name) {
   const boost::regex ipv4_regex(
       "^" + container_name +
       R"([[:blank:]]+RUNNING[[:blank:]]+[0-1][[:blank:]]+.[[:blank:]]+([^[:blank:]]+)[[:blank:]]+.+$)");

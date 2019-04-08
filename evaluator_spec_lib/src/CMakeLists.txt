@@ -13,6 +13,8 @@ list(APPEND SRCS src/lxc/make_virt_ctx.cpp)
 list(APPEND SRCS src/delete_ctx.cpp)
 list(APPEND SRCS src/lxc/lxc_ctx_t.cpp)
 list(APPEND SRCS src/ssh/session_t.cpp)
+list(APPEND SRCS src/ssh/sftp_session_t.cpp)
+list(APPEND SRCS src/ssh/sftp_file_t.cpp)
 list(APPEND SRCS resources/surefire-test-report-3.0.xsd)
 
 # spec sources
@@ -59,7 +61,8 @@ target_include_directories(${EXECUTABLE_NAME} PRIVATE ${INCLUDES})
 target_include_directories(${LIBRARY_NAME} PRIVATE ${INCLUDES})
 target_link_libraries(${EXECUTABLE_NAME} ${LIBS} )
 target_link_libraries(${LIBRARY_NAME} ${LIBS})
-
+target_compile_options(${EXECUTABLE_NAME} PUBLIC -fconcepts)
+target_compile_options(${LIBRARY_NAME} PUBLIC -fconcepts)
 
 
 enable_testing()
@@ -75,7 +78,9 @@ foreach(specSrc ${SPEC_SRCS})
   ${specSrc}
   ${SRCS}
   )
-  target_compile_definitions(${testName} PRIVATE BOOST_TEST_DYN_LINK)
+  target_compile_definitions(${testName} PRIVATE BOOST_TEST_DYN_LINK )
+  target_compile_options(${testName} PUBLIC -fconcepts)
+  
   target_include_directories(${testName} 
   PRIVATE ${INCLUDES})
   #link to Boost libraries AND your targets and dependencies

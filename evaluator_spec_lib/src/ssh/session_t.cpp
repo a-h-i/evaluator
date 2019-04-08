@@ -14,7 +14,9 @@ static ssh_session allocate_session() {
 }
 ssh_session_t::~ssh_session_t() {
   if (session_ != nullptr) {
-    ssh_disconnect(session_);
+    if (is_connected()) {
+      disconnect();
+    }
     ssh_free(session_);
   }
 }
@@ -33,14 +35,29 @@ ssh_session_t::ssh_session_t(const ssh_session_t &other) {
 
 bool ssh_session_t::connect(std::string *what) {
   int status = ssh_connect(session_);
-  if(status == SSH_OK) {
+  if (status == SSH_OK) {
+    authenticate_host();
     return true;
   } else {
-    if(what != nullptr) {
+    if (what != nullptr) {
       *what = ssh_get_error(session_);
     }
     return false;
   }
 }
+bool ssh_session_t::is_connected() const { return ssh_is_connected(session_); }
+void ssh_session_t::authenticate_host() {
+  enum ssh_known_hosts_e state = ssh_session_is_known_server(session_);
+  switch (state) {
+    case SSH_KNOWN_HOSTS_OK:
+      break;
+    default:
+      ssh_session_update_known_hosts(session_);
+  }
+}
+
+void ssh_session_t::disconnect() { ssh_disconnect(session_); }
+
+
 }  // namespace ssh
 }  // namespace evspec

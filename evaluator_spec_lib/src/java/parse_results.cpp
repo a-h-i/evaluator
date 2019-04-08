@@ -36,38 +36,7 @@ static void textReaderDeleter(xmlTextReader *ptr) {
   }
 }
 
-// class NodeIterator {
-//   xmlNodePtr ptr{nullptr};
 
-//  public:
-//   using difference_type = std::size_t;
-//   using value_type = xmlNode;
-//   using pointer = const xmlNode *;
-//   using reference = const xmlNode &;
-//   using iterator_category = std::forward_iterator_tag;
-//   NodeIterator() = default;
-//   NodeIterator(xmlNodePtr ptr) : ptr(ptr){};
-//   explicit operator xmlNodePtr() const { return ptr; }
-//   reference operator*() const { return *ptr; }
-//   bool operator==(const NodeIterator &other) const {
-//     return ptr == other.ptr;
-//   }
-//   bool operator!=(const NodeIterator &other) const {
-//     return ptr != other.ptr;
-//   }
-//   NodeIterator &operator++() {
-//     ptr = ptr->next;
-//     return *this;
-//   }
-//   NodeIterator operator+=(difference_type d) {
-//     xmlNodePtr other = ptr;
-//     for (std::size_t i = 0; (i < d) & (other != nullptr); i++) {
-//       other = other->next;
-//     }
-//     return other;
-//   }
-//   pointer operator->() { return ptr; }
-// };
 
 std::size_t countNodes(xmlNodePtr ptr) {
   std::size_t num = 0;
