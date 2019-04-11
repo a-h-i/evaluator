@@ -13,12 +13,13 @@ list(APPEND SRCS src/lxc/make_virt_ctx.cpp)
 list(APPEND SRCS src/delete_ctx.cpp)
 list(APPEND SRCS src/lxc/lxc_ctx_t.cpp)
 list(APPEND SRCS src/ssh/session_t.cpp)
-list(APPEND SRCS src/ssh/sftp_session_t.cpp)
-list(APPEND SRCS src/ssh/sftp_file_t.cpp)
+list(APPEND SRCS src/ssh/ssh_command_t.cpp)
+list(APPEND SRCS src/utils.cpp)
 list(APPEND SRCS resources/surefire-test-report-3.0.xsd)
 
 # spec sources
 list(APPEND SPEC_SRCS src/test/java_specs.cpp)
+list(APPEND SPEC_SRCS src/test/ssh_specs.cpp)
 
 target_sources(${EXECUTABLE_NAME}
   PRIVATE

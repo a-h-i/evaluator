@@ -1,14 +1,13 @@
-#include "internal/java.h"
-#include "process.h"
+#include <limits.h>
+#include <unistd.h>
 #include <algorithm>
-#include "boost/iostreams/device/file_descriptor.hpp"
-#include "boost/iostreams/stream.hpp"
 #include <exception>
 #include <forward_list>
 #include <iostream>
-#include <limits.h>
 #include <string>
-#include <unistd.h>
+#include "internal/java.h"
+#include "utils.h"
+#include "process.h"
 
 evspec::Result evspec::java::compile(const fs::path &workingDirectory) {
   // setup pipes
@@ -41,36 +40,26 @@ evspec::Result evspec::java::compile(const fs::path &workingDirectory) {
   pidList.push_front(testCompilerPid);
   // we will be reading only from pipes
   evspec::Result result;
-  process::waitPids(
-      std::begin(pidList), std::end(pidList), true,
-      [srcCompilerPid, testCompilerPid, srcCompilerPipe, testCompilerPipe,
-       &result](pid_t pid) {
-        namespace io = boost::iostreams;
-        int fd = -1;
-        if (pid == srcCompilerPid) {
-          // source compilation failed, parse compilation error
-          fd = srcCompilerPipe[0];
-        } else if (pid == testCompilerPid) {
-          // test compilation failed parse compilation error
-          fd = testCompilerPipe[0];
-        }
-        if (fd == -1) {
-          return;
-        }
-        io::stream_buffer<io::file_descriptor_source> streamBuffer(
-            fd, io::never_close_handle);
-        std::istream stream(&streamBuffer);
-        std::vector<char> buffer(PIPE_BUF);
-        std::string &target = fd == testCompilerPipe[0] ? result.testCompilerErr
-                                                        : result.srcCompilerErr;
-        while (stream) {
-          std::size_t readCount = stream.readsome(buffer.data(), buffer.size());
-          target.reserve(
-              std::max(target.size() + readCount, target.capacity()));
-          std::copy_n(std::begin(buffer), readCount,
-                      std::back_inserter(target));
-        }
-      });
+  process::waitPids(std::begin(pidList), std::end(pidList), true,
+                    [srcCompilerPid, testCompilerPid, srcCompilerPipe,
+                     testCompilerPipe, &result](pid_t pid) {
+                      namespace io = boost::iostreams;
+                      int fd = -1;
+                      if (pid == srcCompilerPid) {
+                        // source compilation failed, parse compilation error
+                        fd = srcCompilerPipe[0];
+                      } else if (pid == testCompilerPid) {
+                        // test compilation failed parse compilation error
+                        fd = testCompilerPipe[0];
+                      }
+                      if (fd == -1) {
+                        return;
+                      }
+                      std::string &target = fd == testCompilerPipe[0]
+                                                ? result.testCompilerErr
+                                                : result.srcCompilerErr;
+                      utility::read_fd(std::back_inserter(target), fd);
+                    });
   // close pipes
   close(srcCompilerPipe[0]);
   close(testCompilerPipe[0]);

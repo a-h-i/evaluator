@@ -62,6 +62,8 @@ SET( CMAKE_SHARED_LINKER_FLAGS_PROFILE
 # Disables debug assertion is stdlib
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
     add_definitions(-DNDEBUG)
+else()
+    add_definitions(-DDEBUG)
 endif()
 MARK_AS_ADVANCED(
     CMAKE_CXX_FLAGS_PROFILE

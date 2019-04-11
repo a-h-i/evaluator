@@ -14,9 +14,9 @@ template <typename T1, typename T2> struct can_copy {};
 namespace evspec::process {
 
 enum class EVSPEC_API redirect_target_t : int {
-  StdinRedirect = 0,
-  StdoutRedirect,
-  StderrRedirect
+  StdinRedirect = 1,
+  StdoutRedirect = 2,
+  StderrRedirect = 4
 };
 
 /*

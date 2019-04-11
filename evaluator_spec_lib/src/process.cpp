@@ -76,9 +76,10 @@ static pid_t executeWithFork(std::vector<char *> &argv, std::vector<char *> &env
         close(std::get<1>(redirect));
         dupResult = dupLoop(std::get<0>(redirect), STDIN_FILENO);
       } else {
+        // output redirect
         close(std::get<0>(redirect));
-        int target = redirectType == process::redirect_target_t::StdoutRedirect ? STDOUT_FILENO : STDERR_FILENO;
-        dupResult = dupLoop(std::get<1>(redirect), target);
+        // int target = redirectType == process::redirect_target_t::StdoutRedirect ? STDOUT_FILENO : STDERR_FILENO;
+        // dupResult = dupLoop(std::get<1>(redirect), target);
       }
       if(dupResult < 0) {
         handleDupError(errno);

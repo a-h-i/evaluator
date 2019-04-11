@@ -3,7 +3,7 @@
 #include <forward_list>
 #include "evspec.h"
 #include "internal/java.h"
-#include "internal/utils.h"
+#include "utils.h"
 #include "raii/scope_rai.h"
 
 namespace fs = boost::filesystem;
