@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 #include "internal/ssh_session_t.h"
 #include "boost/filesystem.hpp"
+#include "boost/regex.hpp"
 
 using namespace evspec::ssh;
 using namespace boost::filesystem;
@@ -34,8 +35,32 @@ BOOST_AUTO_TEST_CASE(test_file_upload) {
   path src("fixtures/test_file");
   BOOST_ASSERT(session.is_connected());
   session.mkdir_p("test/upload");
-  session.upload_directory(absolute(src), "test/upload/test_file");
+  BOOST_REQUIRE_NO_THROW(session.upload_directory(absolute(src), "test/upload/test_file"));
+  std::vector<char> data = session.execute_command("test/upload", "ls", {"-lah"});
+  BOOST_REQUIRE(data.size() != 0);
+  boost::regex r("test_file");
+  const char *ls_out = data.data();
+  BOOST_REQUIRE(boost::regex_search(ls_out, r));
+  session.rm("test");
 }
+
+BOOST_AUTO_TEST_CASE(rm) {
+    ssh_session_t session = SSHContext::create_session();
+  session.connect(nullptr);
+  path mkdir_p_path("rm_test/lol/xd");
+  BOOST_ASSERT(session.is_connected());
+  BOOST_REQUIRE_NO_THROW(session.mkdir_p("rm_test/lol/xd"));
+  std::vector<char> data = session.execute_command("", "ls", {"-lah"});
+  BOOST_REQUIRE(data.size() != 0);
+  boost::regex r("rm_test");
+  BOOST_REQUIRE(boost::regex_search(data.data(), r));
+  BOOST_REQUIRE_NO_THROW(session.rm("rm_test"));
+  data = session.execute_command("", "ls", {"-lah"});
+  BOOST_REQUIRE(data.size() != 0);
+  BOOST_REQUIRE(!boost::regex_search(data.data(), r));
+}
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END()

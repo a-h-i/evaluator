@@ -33,7 +33,13 @@ ssh_session_t::~ssh_session_t() {
 void ssh_session_t::mkdir_p(const boost::filesystem::path &dir) {
   std::string command = "mkdir -p ";
   command += dir.native().c_str();
-  ssh_command_t(session_, command.c_str());
+  execute_command("", command, {});
+}
+
+void ssh_session_t::rm(const boost::filesystem::path &dir) {
+  std::string command = "rm -r ";
+  command += dir.native().c_str();
+  execute_command("", command, {});
 }
 ssh_session_t::ssh_session_t(const std::string &host, const std::string &user,
                              const std::string &key_path)
@@ -54,7 +60,7 @@ ssh_session_t::ssh_session_t(const std::string &host, const std::string &user,
 }
 
 ssh_session_t::ssh_session_t(const ssh_session_t &other) {
-  ssh_options_copy(other, &session_);
+  ssh_options_copy(other.session_, &session_);
 }
 
 bool ssh_session_t::connect(std::string *what) {
@@ -112,6 +118,7 @@ void ssh_session_t::scp(boost::filesystem::path const &src,
 #ifdef DEBUG
   scp_flags += "v";
 #endif
+// FIXME: Error when requesting stderr redirect
   process::ExecutionTarget scp_target = {
       .programPath = "/usr/bin/env",
       .workingDirectory = boost::filesystem::current_path(),
@@ -143,7 +150,19 @@ void ssh_session_t::download_directory(
     boost::filesystem::path const &local_path) const {
   scp(remote_path, local_path, scp_direction_t::DOWNLOAD_DIRECTION);
 }
-
+std::vector<char> ssh_session_t::execute_command(const std::string &working_dir, const std::string &cmd,
+                                                 const std::vector<std::string> &args) {
+  std::string cmd_str = cmd;
+  if(!working_dir.empty()) { 
+    cmd_str = "cd " + working_dir + " && " + cmd_str;
+  }
+  for(auto &arg : args) { 
+    cmd_str += " " + arg;
+  }
+  ssh_command_t command(static_cast<ssh_session>(*this), cmd_str.c_str());
+  command.execute();
+  return command.read(false);
+}
 void ssh_session_t::disconnect() { ssh_disconnect(session_); }
 
 }  // namespace ssh

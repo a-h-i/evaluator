@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <vector>
 #include "boost/filesystem/path.hpp"
 #include "dll_imports.h"
 #include "libssh/libssh.h"
-
 namespace evspec {
 namespace EVSPEC_LOCAL ssh {
 
@@ -26,13 +26,11 @@ class ssh_session_t {
   ssh_session_t(const std::string &host, const std::string &user,
                 const std::string &key_path);
   inline ssh_session_t(ssh_session session) : session_(session) {}
-  inline ssh_session_t(ssh_session_t &&other):
-  key_path(std::move(other.key_path)),
-  host(std::move(other.host)),
-  user(std::move(other.user))
-   {
+  inline ssh_session_t(ssh_session_t &&other)
+      : key_path(std::move(other.key_path)),
+        host(std::move(other.host)),
+        user(std::move(other.user)) {
     std::swap(session_, other.session_);
-    
   }
   ssh_session_t(const ssh_session_t &);
   ssh_session_t operator=(const ssh_session_t &) = delete;
@@ -49,6 +47,8 @@ class ssh_session_t {
                         boost::filesystem::path const &remote_path);
   void download_directory(boost::filesystem::path const &remote_path,
                           boost::filesystem::path const &local_path) const;
+  std::vector<char> execute_command(const std::string &working_dir, const std::string &cmd,
+                                                 const std::vector<std::string> &args);
   bool connect(std::string *what);
   bool is_connected() const;
   void mkdir_p(boost::filesystem::path const &dir);
@@ -56,7 +56,7 @@ class ssh_session_t {
   void disconnect();
   ~ssh_session_t();
   inline ssh_session operator->() const { return session_; }
-  inline operator ssh_session() const { return session_; }
+  inline explicit operator ssh_session() const { return session_; }
 };
 }  // namespace EVSPEC_LOCALssh
 }  // namespace evspec

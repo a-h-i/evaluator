@@ -14,3 +14,7 @@ Restart your system after these updates
 # Firewall Rules
 
 Use ssh only firewall as described [here](../misc/ssh_only_firewall.md) 
+
+
+# LXC Container setup
+LXC container is used for virtualization follow the guide [here](LXC.md)
