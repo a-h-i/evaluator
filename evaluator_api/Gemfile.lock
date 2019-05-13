@@ -171,7 +171,7 @@ GEM
       ffi (~> 1.0)
     rbnacl (6.0.1)
       ffi
-    redis (4.1.0)
+    redis (4.1.1)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.2)
