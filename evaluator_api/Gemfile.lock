@@ -223,7 +223,7 @@ GEM
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unicode-display_width (1.4.1)
-    unicorn (5.4.1)
+    unicorn (5.5.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
     websocket-driver (0.7.0)
