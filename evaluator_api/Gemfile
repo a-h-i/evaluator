@@ -13,7 +13,7 @@ gem 'bootsnap', '~> 1.1', require: false
 # gem 'jbuilder', '~> 2.5'
 
 
-gem 'sidekiq', '~> 5.2'
+gem 'sidekiq', '~> 6.0'
 gem 'pry-rails'
 gem 'redis', '~> 4.1'
 gem 'hiredis', '~> 0.6'
