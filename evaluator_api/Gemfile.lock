@@ -52,7 +52,7 @@ GEM
       ffi (~> 1.9)
       ffi-compiler (~> 0.1)
     ast (2.4.0)
-    bootsnap (1.4.0)
+    bootsnap (1.7.4)
       msgpack (~> 1.0)
     builder (3.2.3)
     byebug (10.0.2)
@@ -113,11 +113,13 @@ GEM
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (0.9.2)
-    mimemagic (0.3.3)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_mime (1.0.1)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
-    msgpack (1.2.6)
+    msgpack (1.4.2)
     nio4r (2.3.1)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
@@ -236,7 +238,7 @@ PLATFORMS
 DEPENDENCIES
   annotate (~> 2.7)
   argon2 (~> 2.0)
-  bootsnap (~> 1.1)
+  bootsnap (~> 1.7)
   byebug
   email_spec (~> 2.2)
   factory_bot_rails (~> 5.0)
